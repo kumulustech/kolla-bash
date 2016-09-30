@@ -1,8 +1,8 @@
 #!/bin/bash
 
-yum install bridge-utils -y
+apt-get install bridge-utils -y
 
-brctl add br-ex
+brctl addbr br-ex
 
 if [[ -z $(grep br-ex /etc/network/interfaces) ]]; then
 cat >> /etc/network/interfaces <<EOF
@@ -47,7 +47,7 @@ pip install ansible
 git clone https://github.com/openstack/kolla
 pip install kolla/
 
-cp -r /usr/share/kolla/etc_examples/kolla /etc/
+cp -r /usr/local/share/kolla/etc_examples/kolla /etc/
 
 NETWORK_INTERFACE="bond0"
 NEUTRON_INTERFACE="br-ex"
