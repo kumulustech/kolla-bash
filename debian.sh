@@ -25,8 +25,11 @@ apt install \
     libssl-dev \
     gcc \
     ansible \
-    bridge-utils \
-    docker.io -y
+    bridge-utils -y
+
+apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+deb https://apt.dockerproject.org/repo ubuntu-xenial main
+apt-get install docker-engine
 
 apt-get purge lxc lxd -y
 pip install -U pip
