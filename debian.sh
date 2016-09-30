@@ -52,7 +52,17 @@ pip install kolla/
 
 cp -r /usr/local/share/kolla/etc_examples/kolla /etc/
 
+if [[ $(ip l | grep team) ]]; then
+NETWORK_INTERFACE="team0"
+elif [[ $(ip l | grep bond) ]]; then
 NETWORK_INTERFACE="bond0"
+elif [[ $(ip l | grep enp0s8) ]]; then
+NETWORK_INTERFACE="enp0s8"
+else
+echo "Can't figure out network interface, please manually edit"
+exit 1
+fi
+
 NEUTRON_INTERFACE="br-ex"
 GLOBALS_FILE="/etc/kolla/globals.yml"
 ADDRESS="$(ip -4 addr show ${NETWORK_INTERFACE} | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1)"
