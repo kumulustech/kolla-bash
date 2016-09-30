@@ -97,7 +97,7 @@ fi
 kolla-ansible pull
 if [ ! $? == 0 ]; then
   echo prechecks failed
-  exit 1
+  echo your system may not work
 fi
 
 kolla-ansible deploy
