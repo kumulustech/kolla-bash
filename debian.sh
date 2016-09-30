@@ -58,7 +58,7 @@ BASE="$(echo ${ADDRESS} | cut -d. -f 1,2,3)"
 VIP="${ADDRESS}"
 
 sed -i "s/^kolla_internal_vip_address:.*/kolla_internal_vip_address: \"${VIP}\"/g" ${GLOBALS_FILE}
-sed -i "s/^network_interface:.*/network_interface: \"${NETWORK_INTERFACE}\"/g" ${GLOBALS_FILE}
+sed -i "s/^#network_interface:.*/network_interface: \"${NETWORK_INTERFACE}\"/g" ${GLOBALS_FILE}
 
 if [[ -z $(grep neutron_bridge_name ${GLOBALS_FILE}) ]]; then
 cat >> ${GLOBALS_FILE} <<EOF
@@ -70,18 +70,20 @@ enable_mongodb: "yes"
 EOF
 fi
 
-sed -i "s/^neutron_external_interface:.*/neutron_external_interface: \"${NEUTRON_INTERFACE}\"/g" ${GLOBALS_FILE}
+sed -i "s/^#neutron_external_interface:.*/neutron_external_interface: \"${NEUTRON_INTERFACE}\"/g" ${GLOBALS_FILE}
 sed -i "s/^${ADDRESS}.*/${ADDRESS} $(hostname)/" /etc/hosts
 if [[ -z $(grep ${ADDRESS} /etc/hosts) ]]; then
 echo "${ADDRESS} $(hostname)" >> /etc/hosts
 fi
 
-if [ `egrep -c 'vmx|svm|0xc0f' /proc/cpuinfo` == '0' && ! -f /etc/kolla/config/nova/nova-compute.conf ]; then
+if [ `egrep -c 'vmx|svm|0xc0f' /proc/cpuinfo` == '0' ] ;then
+if [ ! -f /etc/kolla/config/nova/nova-compute.conf ]; then
 mkdir -p /etc/kolla/config/nova/
 tee > /etc/kolla/config/nova/nova-compute.conf <<-EOF
 [libvirt]
 virt_type=qemu
 EOF
+fi
 fi
 
 kolla-genpwd
