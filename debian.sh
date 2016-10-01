@@ -76,6 +76,7 @@ BASE="$(echo ${ADDRESS} | cut -d. -f 1,2,3)"
 VIP="${ADDRESS}"
 
 sed -i "s/^kolla_internal_vip_address:.*/kolla_internal_vip_address: \"${VIP}\"/g" ${GLOBALS_FILE}
+sed -i "s/^network_interface:.*/network_interface: \"${NETWORK_INTERFACE}\"/g" ${GLOBALS_FILE}
 sed -i "s/^#network_interface:.*/network_interface: \"${NETWORK_INTERFACE}\"/g" ${GLOBALS_FILE}
 
 if [[ -z $(grep neutron_bridge_name ${GLOBALS_FILE}) ]]; then
@@ -89,7 +90,7 @@ EOF
 fi
 
 sed -i "s/^#neutron_external_interface:.*/neutron_external_interface: \"${NEUTRON_INTERFACE}\"/g" ${GLOBALS_FILE}
-sed -i "s/^${ADDRESS}.*/${ADDRESS} $(hostname)/" /etc/hosts
+sed -i "s/^127.0.1.1\(.*\)/${ADDRESS}\1/" /etc/hosts
 if [[ -z $(grep ${ADDRESS} /etc/hosts) ]]; then
 echo "${ADDRESS} $(hostname)" >> /etc/hosts
 fi
