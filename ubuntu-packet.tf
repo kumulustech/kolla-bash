@@ -42,15 +42,6 @@ variable domain_name {
 # baremetal_2
 # baremetal_4
 
-resource "packet_device" "kolla-registry" {
-        hostname = "kolla-registry"
-        plan = "baremetal_0"
-        facility = "ewr1"
-	operating_system = "ubuntu_16_04_image"
-        billing_cycle = "hourly"
-        project_id = "320c2c2f-6876-4621-929a-93a47e07d2da"
-}
-
 resource "packet_device" "kolla-control" {
         hostname = "kolla-control"
         plan = "baremetal_0"
@@ -60,14 +51,24 @@ resource "packet_device" "kolla-control" {
         project_id = "320c2c2f-6876-4621-929a-93a47e07d2da"
 }
 
-resource "packet_device" "kolla-compute" {
-        hostname = "kolla-compute"
-        plan = "baremetal_0"
-        facility = "ewr1"
-	operating_system = "ubuntu_16_04_image"
-        billing_cycle = "hourly"
-        project_id = "320c2c2f-6876-4621-929a-93a47e07d2da"
-}
+###resource "packet_device" "kolla-registry" {
+###        hostname = "kolla-registry"
+###        plan = "baremetal_0"
+###        facility = "ewr1"
+###	operating_system = "ubuntu_16_04_image"
+###        billing_cycle = "hourly"
+###        project_id = "320c2c2f-6876-4621-929a-93a47e07d2da"
+###}
+
+
+###resource "packet_device" "kolla-compute" {
+###        hostname = "kolla-compute"
+###        plan = "baremetal_0"
+###        facility = "ewr1"
+###	operating_system = "ubuntu_16_04_image"
+###        billing_cycle = "hourly"
+###        project_id = "320c2c2f-6876-4621-929a-93a47e07d2da"
+###}
 
 # Add a pointer to the new IP address
 # Note that the default TTYL is 1800 seconds, so it will take
@@ -80,17 +81,17 @@ resource "digitalocean_record" "kolla-control" {
     value = "${packet_device.kolla-control.network.0.address}"
 }
 
-resource "digitalocean_record" "kolla-registry" {
-    domain = "${var.domain_name}"
-    type = "A"
-    name = "kolla-registry"
-    value = "${packet_device.kolla-registry.network.0.address}"
-}
-
-resource "digitalocean_record" "kolla-compute" {
-    domain = "${var.domain_name}"
-    type = "A"
-    name = "kolla-compute"
-    value = "${packet_device.kolla-compute.network.0.address}"
-}
+###resource "digitalocean_record" "kolla-registry" {
+###    domain = "${var.domain_name}"
+###    type = "A"
+###    name = "kolla-registry"
+###    value = "${packet_device.kolla-registry.network.0.address}"
+###}
+###
+###resource "digitalocean_record" "kolla-compute" {
+###    domain = "${var.domain_name}"
+###    type = "A"
+###    name = "kolla-compute"
+###    value = "${packet_device.kolla-compute.network.0.address}"
+###}
 

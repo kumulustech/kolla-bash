@@ -24,10 +24,11 @@ apt install \
     libffi-dev \
     libssl-dev \
     gcc \
-    ansible \
     apt-transport-https \
     ca-certificates \
     bridge-utils -y
+
+pip install ansible==1.9.6
 
 apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 deb https://apt.dockerproject.org/repo ubuntu-xenial main
@@ -46,12 +47,12 @@ EOF
 fi
 
 systemctl daemon-reload
-systemctl enable dockerd
-systemctl restart dockerd
+systemctl enable docker
+systemctl restart docker
 
 pip install ansible
 
-git clone https://github.com/openstack/kolla
+git clone https://github.com/openstack/kolla -b stable/mitaka
 pip install kolla/
 
 cp -r /usr/local/share/kolla/etc_examples/kolla /etc/
