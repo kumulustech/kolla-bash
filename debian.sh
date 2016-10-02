@@ -17,6 +17,7 @@ ifup br-ex
 apt install python-pip -y
 apt install \
     vim \
+    htop \
     python-dev \
     python-netaddr \
     python-openstackclient \
