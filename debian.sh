@@ -28,7 +28,7 @@ apt install \
     ca-certificates \
     bridge-utils -y
 
-pip install ansible==1.9.6
+pip install ansible==2.1.2.0
 
 apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 deb https://apt.dockerproject.org/repo ubuntu-xenial main
@@ -52,7 +52,7 @@ systemctl restart docker
 
 pip install ansible
 
-git clone https://github.com/openstack/kolla -b stable/mitaka
+git clone https://github.com/openstack/kolla
 pip install kolla/
 
 cp -r /usr/local/share/kolla/etc_examples/kolla /etc/
@@ -84,8 +84,9 @@ cat >> ${GLOBALS_FILE} <<EOF
 neutron_bridge_name: "br-ex"
 enable_haproxy: "no"
 enable_keepalived: "no"
-enable_ceilometer: "yes"
-enable_mongodb: "yes"
+kolla_base_distro: "ubuntu"
+kolla_install_type: "source"
+openstack_release: "3.0.0"
 EOF
 fi
 
@@ -105,18 +106,14 @@ EOF
 fi
 fi
 
+kolla-build --base ubuntu --type source --tag 3.0.0
+
 kolla-genpwd
 sed -i "s/^keystone_admin_password:.*/keystone_admin_password: admin1/" /etc/kolla/passwords.yml
 kolla-ansible prechecks
 if [ ! $? == 0 ]; then
   echo prechecks failed
   exit 1
-fi
-
-kolla-ansible pull
-if [ ! $? == 0 ]; then
-  echo prechecks failed
-  echo your system may not work
 fi
 
 kolla-ansible deploy
