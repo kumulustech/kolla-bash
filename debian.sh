@@ -83,6 +83,7 @@ sed -i "s/^#network_interface:.*/network_interface: \"${NETWORK_INTERFACE}\"/g" 
 
 if [[ -z $(grep neutron_bridge_name ${GLOBALS_FILE}) ]]; then
 cat >> ${GLOBALS_FILE} <<EOF
+neutron_plugin_agent: linuxbridge
 neutron_bridge_name: "br-ex"
 enable_haproxy: "no"
 enable_keepalived: "no"
@@ -153,6 +154,6 @@ EOF
 
 bash ./import_image.sh
 
-bash ./setup_network.sh
+bash ./setup_network.sh ${BASE}
 
 echo "Login using http://${ADDRESS} with default as domain,  admin as username, and $(cat /etc/kolla/passwords.yml | grep "keystone_admin_password" | awk '{print $2}') as password"
