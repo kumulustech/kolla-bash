@@ -2,7 +2,6 @@
 
 apt-get install bridge-utils -y
 
-brctl addbr br-ex
 
 if [[ -z $(grep br-ex /etc/network/interfaces) ]]; then
 cat >> /etc/network/interfaces <<EOF
@@ -11,8 +10,11 @@ iface br-ex inet static
   address 192.168.254.1
   netmask 255.255.255.0
 EOF
-fi
+brctl addbr br-ex
 ifup br-ex
+fi
+
+
 
 apt install python-pip -y
 apt install \
@@ -70,10 +72,17 @@ echo "Can't figure out network interface, please manually edit"
 exit 1
 fi
 
-NEUTRON_INTERFACE="br-ex"
+if [[ $(ip l | grep enp0s9) ]]; then
+NEUTRON_INTERFACE="enp0s9"
+ifup enp0s9
+NEUTRON_PUB="$(ip -4 addr show ${NEUTRON_INTERFACE} | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1)"
+BASE="$(echo ${NEUTRON_PUB} | cut -d. -f 1,2,3)"
+else
+NEUTRON_INTERFACE="eth1"
+fi
 GLOBALS_FILE="/etc/kolla/globals.yml"
 ADDRESS="$(ip -4 addr show ${NETWORK_INTERFACE} | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1)"
-BASE="$(echo ${ADDRESS} | cut -d. -f 1,2,3)"
+#BASE="$(echo ${ADDRESS} | cut -d. -f 1,2,3)"
 #VIP=$(echo "${BASE}.254")
 VIP="${ADDRESS}"
 
