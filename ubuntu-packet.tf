@@ -74,12 +74,12 @@ resource "packet_device" "kolla-control" {
 # Note that the default TTYL is 1800 seconds, so it will take
 # up to 30 minutes in this enviornment for the record to time out.
 
-resource "digitalocean_record" "kolla-control" {
-    domain = "${var.domain_name}"
-    type = "A"
-    name = "kolla-control"
-    value = "${packet_device.kolla-control.network.0.address}"
-}
+#resource "digitalocean_record" "kolla-control" {
+#    domain = "${var.domain_name}"
+#    type = "A"
+#    name = "kolla-control"
+#    value = "${packet_device.kolla-control.network.0.address}"
+#}
 
 ###resource "digitalocean_record" "kolla-registry" {
 ###    domain = "${var.domain_name}"
