@@ -92,8 +92,6 @@ sed -i "s/^#network_interface:.*/network_interface: \"${NETWORK_INTERFACE}\"/g" 
 
 if [[ -z $(grep neutron_bridge_name ${GLOBALS_FILE}) ]]; then
 cat >> ${GLOBALS_FILE} <<EOF
-neutron_plugin_agent: linuxbridge
-neutron_bridge_name: "br-ex"
 enable_haproxy: "no"
 enable_keepalived: "no"
 kolla_base_distro: "ubuntu"
