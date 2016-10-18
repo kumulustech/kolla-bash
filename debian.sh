@@ -3,19 +3,6 @@
 apt-get install bridge-utils -y
 
 
-if [[ -z $(grep br-ex /etc/network/interfaces) ]]; then
-cat >> /etc/network/interfaces <<EOF
-auto br-ex
-iface br-ex inet static
-  address 192.168.254.1
-  netmask 255.255.255.0
-EOF
-brctl addbr br-ex
-ifup br-ex
-fi
-
-
-
 apt install python-pip -y
 apt install \
     vim \
@@ -63,23 +50,21 @@ cp -r /usr/local/share/kolla/etc_examples/kolla /etc/
 
 if [[ $(ip l | grep team) ]]; then
 NETWORK_INTERFACE="team0"
+NEUTRON_INTERFACE="team0:0"
 elif [[ $(ip l | grep bond) ]]; then
 NETWORK_INTERFACE="bond0"
+NEUTRON_INTERFACE="bond0:0"
 elif [[ $(ip l | grep enp0s8) ]]; then
 NETWORK_INTERFACE="enp0s8"
+NEUTRON_INTERFACE="enp0s9"
+ifup enp0s9
 else
 echo "Can't figure out network interface, please manually edit"
 exit 1
 fi
-
-if [[ $(ip l | grep enp0s9) ]]; then
-NEUTRON_INTERFACE="enp0s9"
-ifup enp0s9
-NEUTRON_PUB="$(ip -4 addr show ${NEUTRON_INTERFACE} | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1)"
+NEUTRON_PUB="$(ip -4 addr show ${NEUTRON_INTERFACE} | grep "${NEUTRON_INTERFACE}" | head -1 |awk '{print $2}' | cut -d/ -f1)"
 BASE="$(echo ${NEUTRON_PUB} | cut -d. -f 1,2,3)"
-else
-NEUTRON_INTERFACE="eth1"
-fi
+
 GLOBALS_FILE="/etc/kolla/globals.yml"
 ADDRESS="$(ip -4 addr show ${NETWORK_INTERFACE} | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1)"
 #BASE="$(echo ${ADDRESS} | cut -d. -f 1,2,3)"
