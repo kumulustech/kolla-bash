@@ -5,7 +5,7 @@
 #__CONTROL__
 
 # The above can also be specified as follows:
-#control[01:03]     ansible_ssh_user=kolla
+#control[01:03]     ansible_user=kolla
 
 # The network nodes are where your l3-agent and loadbalancers will run
 # This can be the same as a host in the control group
@@ -16,6 +16,9 @@
 #__CONTROL__
 #__COMPUTE__
 
+[monitoring]
+#__CONTROL__
+
 # When compute nodes and control nodes use different interfaces,
 # you can specify "api_interface" and another interfaces like below:
 #compute01 neutron_external_interface=eth0 api_interface=em1 storage_interface=em1 tunnel_interface=em1
@@ -23,11 +26,31 @@
 [storage]
 #__CONTROL__
 
+[baremetal:children]
+control
+network
+compute
+storage
 
 # You can explicitly specify which hosts run each project by updating the
 # groups in the sections below. Common services are grouped together.
+[collectd:children]
+compute
+
+[grafana:children]
+monitoring
+
+[etcd:children]
+control
+
+[influxdb:children]
+monitoring
+
 [kibana:children]
 control
+
+[telegraf:children]
+monitoring
 
 [elasticsearch:children]
 control
@@ -59,6 +82,9 @@ network
 [cinder:children]
 control
 
+[cloudkitty:children]
+control
+
 [memcached:children]
 control
 
@@ -66,6 +92,9 @@ control
 control
 
 [swift:children]
+control
+
+[barbican:children]
 control
 
 [heat:children]
@@ -77,22 +106,50 @@ control
 [ironic:children]
 control
 
-[ceph-mon:children]
+[ceph:children]
 control
-
-[ceph-rgw:children]
-control
-
-[ceph-osd:children]
-storage
 
 [magnum:children]
+control
+
+[sahara:children]
 control
 
 [mistral:children]
 control
 
 [manila:children]
+control
+
+[ceilometer:children]
+control
+
+[aodh:children]
+control
+
+[congress:children]
+control
+
+[gnocchi:children]
+control
+
+# Tempest
+[tempest:children]
+control
+
+[senlin:children]
+control
+
+[vmtp:children]
+control
+
+[watcher:children]
+control
+
+[rally:children]
+control
+
+[searchlight:children]
 control
 
 # Additional control implemented here. These groups allow you to control which
@@ -141,8 +198,24 @@ neutron
 [neutron-l3-agent:children]
 neutron
 
+[neutron-lbaas-agent:children]
+neutron
+
 [neutron-metadata-agent:children]
 neutron
+
+[neutron-vpnaas-agent:children]
+neutron
+
+# Ceph
+[ceph-mon:children]
+ceph
+
+[ceph-rgw:children]
+ceph
+
+[ceph-osd:children]
+storage
 
 # Cinder
 [cinder-api:children]
@@ -155,6 +228,22 @@ storage
 cinder
 
 [cinder-volume:children]
+storage
+
+# Cloudkitty
+[cloudkitty-api:children]
+cloudkitty
+
+[cloudkitty-processor:children]
+cloudkitty
+
+# iSCSI
+[iscsid:children]
+compute
+storage
+ironic-conductor
+
+[tgtd:children]
 storage
 
 # Manila
@@ -179,6 +268,16 @@ storage
 
 [swift-object-server:children]
 storage
+
+# Barbican
+[barbican-api:children]
+barbican
+
+[barbican-keystone-listener:children]
+barbican
+
+[barbican-worker:children]
+barbican
 
 # Heat
 [heat-api:children]
@@ -217,6 +316,13 @@ magnum
 [magnum-conductor:children]
 magnum
 
+# Sahara
+[sahara-api:children]
+sahara
+
+[sahara-engine:children]
+sahara
+
 # Mistral
 [mistral-api:children]
 mistral
@@ -227,3 +333,79 @@ mistral
 [mistral-engine:children]
 mistral
 
+# Ceilometer
+[ceilometer-api:children]
+ceilometer
+
+[ceilometer-central:children]
+ceilometer
+
+[ceilometer-notification:children]
+ceilometer
+
+[ceilometer-collector:children]
+ceilometer
+
+[ceilometer-compute:children]
+compute
+
+# Aodh
+[aodh-api:children]
+aodh
+
+[aodh-evaluator:children]
+aodh
+
+[aodh-listener:children]
+aodh
+
+[aodh-notifier:children]
+aodh
+
+# Congress
+[congress-api:children]
+congress
+
+[congress-datasource:children]
+congress
+
+[congress-policy-engine:children]
+congress
+
+# Gnocchi
+[gnocchi-api:children]
+gnocchi
+
+[gnocchi-statsd:children]
+gnocchi
+
+[gnocchi-metricd:children]
+gnocchi
+
+# Multipathd
+[multipathd:children]
+compute
+
+# Watcher
+[watcher-api:children]
+watcher
+
+[watcher-engine:children]
+watcher
+
+[watcher-applier:children]
+watcher
+
+# Senlin
+[senlin-api:children]
+senlin
+
+[senlin-engine:children]
+senlin
+
+# Searchlight
+[searchlight-api:children]
+searchlight
+
+[searchlight-listener:children]
+searchlight

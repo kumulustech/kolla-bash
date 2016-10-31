@@ -36,3 +36,5 @@ default_group=`neutron security-group-list | awk '/ default / {print $2}' | tail
 neutron security-group-rule-create --direction ingress --port-range-min 22 --port-range-max 22 --protocol tcp --remote-ip-prefix 0.0.0.0/0 ${default_group} 
 neutron security-group-rule-create --direction ingress --port-range-min 80 --port-range-max 80 --protocol tcp --remote-ip-prefix 0.0.0.0/0 ${default_group}
 neutron security-group-rule-create --direction ingress --port-range-min 443 --port-range-max 443 --protocol tcp --remote-ip-prefix 0.0.0.0/0 ${default_group}
+neutron security-group-rule-create --direction ingress --port-range-min 0 --port-range-max 0 --protocol icmp --remote-ip-prefix 0.0.0.0/0 ${default_group}
+neutron security-group-rule-create --direction ingress --port-range-min 0 --port-range-max 255 --protocol icmp --remote-ip-prefix 0.0.0.0/0 default
