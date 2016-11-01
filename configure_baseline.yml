@@ -1,0 +1,28 @@
+---
+- hosts: all
+  become: true
+  become_user: root
+  vars:
+   domain: opsits.com
+  tasks:
+  - name: create and update ssh for shared communications
+    include: tasks/ssh.yml
+  - name: ensure hosts file is correct
+    include: tasks/hosts.yml
+  - name: ensure resolve has search for domain
+    include: tasks/resolve.yml
+  - name: upload files
+    copy: src={{item}} dest=/root/{{item}} mode=0755
+    with_items:
+      - add_flavor.sh
+      - debian.sh
+      - debian-mn.sh
+      - post-install.sh
+      - debian-cmp.sh
+      - setup_network.sh
+      - multinode.sh
+      - import_image.sh
+  - name: upload multinode template
+    copy: src=multinode.tmpl dest=/root/multinode.tmpl
+#  - name: install docker
+#    include: tasks/docker.yml

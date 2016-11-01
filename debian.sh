@@ -1,10 +1,7 @@
 #!/bin/bash
 
-apt-get install bridge-utils -y
-
-
-apt install python-pip -y
 apt install \
+    python-pip \
     vim \
     htop \
     python-dev \
@@ -18,7 +15,6 @@ apt install \
     ca-certificates \
     bridge-utils -y
 
-pip install ansible==2.1.2.0
 
 apt-get install apt-transport-https ca-certificates -y
 apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
@@ -41,7 +37,8 @@ systemctl daemon-reload
 systemctl enable docker
 systemctl restart docker
 
-pip install ansible
+pip install ansible==2.1.2.0
+pip install docker-py
 
 git clone https://github.com/openstack/kolla
 pip install kolla/
@@ -86,10 +83,6 @@ EOF
 fi
 
 sed -i "s/^#neutron_external_interface:.*/neutron_external_interface: \"${NEUTRON_INTERFACE}\"/g" ${GLOBALS_FILE}
-sed -i "s/^127.0.1.1\(.*\)/${ADDRESS}\1/" /etc/hosts
-if [[ -z $(grep ${ADDRESS} /etc/hosts) ]]; then
-echo "${ADDRESS} $(hostname)" >> /etc/hosts
-fi
 
 if [ `egrep -c 'vmx|svm|0xc0f' /proc/cpuinfo` == '0' ] ;then
 if [ ! -f /etc/kolla/config/nova/nova-compute.conf ]; then
@@ -101,11 +94,13 @@ EOF
 fi
 fi
 
-kolla-build --base ubuntu --type source --tag 3.0.0
+#kolla-build --base ubuntu --type source --tag 3.0.0
 
 kolla-genpwd
+
 sed -i "s/^keystone_admin_password:.*/keystone_admin_password: admin1/" /etc/kolla/passwords.yml
-kolla-ansible prechecks
+
+kolla-ansible -i multinode prechecks
 if [ ! $? == 0 ]; then
   echo prechecks failed
   exit 1
@@ -113,14 +108,12 @@ fi
 
 kolla-ansible deploy
 if [ ! $? == 0 ]; then
-  echo prechecks failed
-  exit 1
+ echo deploy failed
+ exit 1
 fi
 
 tee > /root/open.rc <<EOF
 #!/bin/bash
-
-# set environment variables for Starmer's OpenStack demo install
 
 # "source this file, don't subshell" predicate inspired by
 # http://stackoverflow.com/a/23009039/6195005

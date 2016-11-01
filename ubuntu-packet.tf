@@ -63,7 +63,7 @@ resource "packet_device" "kolla-control" {
 
 resource "packet_device" "kolla-compute" {
         hostname = "kolla-compute"
-        plan = "baremetal_0"
+        plan = "baremetal_1"
         facility = "ewr1"
 	operating_system = "ubuntu_16_04_image"
         billing_cycle = "hourly"

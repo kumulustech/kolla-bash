@@ -24,6 +24,7 @@ apt-get update
 apt-get install docker-engine -y
 
 apt-get purge lxc lxd -y
+pip install -U pip
 mkdir -p /etc/systemd/system/docker.service.d
 if [[ -z $(grep shared /etc/systemd/system/docker.service.d/kolla.conf) ]]; then
 tee /etc/systemd/system/docker.service.d/kolla.conf <<-EOF
@@ -36,9 +37,13 @@ systemctl daemon-reload
 systemctl enable docker
 systemctl restart docker
 
-pip install -U pip
 pip install ansible==2.1.2.0
 pip install docker-py
+
+git clone https://github.com/openstack/kolla
+pip install kolla/
+
+cp -r /usr/local/share/kolla/etc_examples/kolla /etc/
 
 if [[ $(ip l | grep team) ]]; then
 NETWORK_INTERFACE="team0"
@@ -57,7 +62,26 @@ fi
 NEUTRON_PUB="$(ip -4 addr show ${NEUTRON_INTERFACE} | grep "${NEUTRON_INTERFACE}" | head -1 |awk '{print $2}' | cut -d/ -f1)"
 BASE="$(echo ${NEUTRON_PUB} | cut -d. -f 1,2,3)"
 
+GLOBALS_FILE="/etc/kolla/globals.yml"
 ADDRESS="$(ip -4 addr show ${NETWORK_INTERFACE} | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1)"
+
+VIP="${ADDRESS}"
+
+sed -i "s/^kolla_internal_vip_address:.*/kolla_internal_vip_address: \"${VIP}\"/g" ${GLOBALS_FILE}
+sed -i "s/^network_interface:.*/network_interface: \"${NETWORK_INTERFACE}\"/g" ${GLOBALS_FILE}
+sed -i "s/^#network_interface:.*/network_interface: \"${NETWORK_INTERFACE}\"/g" ${GLOBALS_FILE}
+
+if [[ -z $(grep neutron_bridge_name ${GLOBALS_FILE}) ]]; then
+cat >> ${GLOBALS_FILE} <<EOF
+enable_haproxy: "no"
+enable_keepalived: "no"
+kolla_base_distro: "ubuntu"
+kolla_install_type: "source"
+openstack_release: "3.0.0"
+EOF
+fi
+
+sed -i "s/^#neutron_external_interface:.*/neutron_external_interface: \"${NEUTRON_INTERFACE}\"/g" ${GLOBALS_FILE}
 
 if [ `egrep -c 'vmx|svm|0xc0f' /proc/cpuinfo` == '0' ] ;then
 if [ ! -f /etc/kolla/config/nova/nova-compute.conf ]; then
@@ -69,3 +93,24 @@ EOF
 fi
 fi
 
+#kolla-build --base ubuntu --type source --tag 3.0.0
+
+kolla-genpwd
+
+sed -i "s/^keystone_admin_password:.*/keystone_admin_password: admin1/" /etc/kolla/passwords.yml
+
+./multinode.sh kolla-control kolla-compute
+
+ssh kolla-compute /root/debian-cmp.sh
+
+kolla-ansible -i multinode prechecks
+if [ ! $? == 0 ]; then
+  echo prechecks failed
+  exit 1
+fi
+
+#kolla-ansible -i multinode deploy
+#if [ ! $? == 0 ]; then
+#  echo deploy failed
+#  exit 1
+#fi
