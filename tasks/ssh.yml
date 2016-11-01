@@ -1,8 +1,3 @@
-- name: create ssh keys
-  command: ssh-keygen -t rsa -N '' -f id_rsa
-  run_once: true
-  delegate_to: localhost
-  ignore_errors: yes
 - name: copy ssh keys to system
   copy: src={{item}} dest=/root/.ssh/{{item}} mode=600
   with_items:
