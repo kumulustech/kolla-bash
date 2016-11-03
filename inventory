@@ -1,5 +1,5 @@
 [control]
-kolla-control
+kolla-control ansible_ssh_host=kolla-control.opsits.com
 [compute]
-kolla-compute
+kolla-compute ansible_ssh_host=kolla-compute.opsits.com
 

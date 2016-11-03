@@ -1,6 +1,8 @@
 #!/bin/bash
 
-apt install \
+apt-get update
+apt-get dist-upgrade -y
+apt-get install \
     python-pip \
     vim \
     htop \
@@ -64,8 +66,6 @@ BASE="$(echo ${NEUTRON_PUB} | cut -d. -f 1,2,3)"
 
 GLOBALS_FILE="/etc/kolla/globals.yml"
 ADDRESS="$(ip -4 addr show ${NETWORK_INTERFACE} | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1)"
-#BASE="$(echo ${ADDRESS} | cut -d. -f 1,2,3)"
-#VIP=$(echo "${BASE}.254")
 VIP="${ADDRESS}"
 
 sed -i "s/^kolla_internal_vip_address:.*/kolla_internal_vip_address: \"${VIP}\"/g" ${GLOBALS_FILE}

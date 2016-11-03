@@ -1,6 +1,8 @@
 #!/bin/bash
 
-apt install \
+apt-get update
+apt-get dist-upgrade -y
+apt-get install \
     python-pip \
     vim \
     htop \

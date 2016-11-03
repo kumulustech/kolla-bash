@@ -1,6 +1,8 @@
 #!/bin/bash
 
-apt install \
+apt-get update
+apt-get dist-upgrade -y
+apt-get install \
     python-pip \
     vim \
     htop \
@@ -55,7 +57,8 @@ NEUTRON_INTERFACE="bond0:0"
 NEUTRON_ADDRESS="$(ip -4 addr show ${NEUTRON_INTERFACE} | grep bond0: | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1)"
 NEUTRON_NM="$(ip -4 addr show ${NEUTRON_INTERFACE} | grep bond0: | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f2)"
 if [[ ${NEUTRON_NM} -gt 25 ]]; then
-ip a c ${NEUTRON_ADDRESS}/25 dev ${NEUTRON_INTERFACE}
+ip a d ${NEUTRON_ADDRESS} dev ${NEUTRON_INTERFACE}
+ip a a ${NEUTRON_ADDRESS}/25 dev ${NEUTRON_INTERFACE}
 NEUTRON_NM=25
 fi
 gawk -f nis/changeInterface.awk /etc/network/interfaces device=${NEUTRON_INTERFACE} address=${NEUTRON_INTERFACE} netmask=255.255.255.128 mode=static >& /etc/network/interfaces
