@@ -31,7 +31,26 @@
       - setup_network.sh
       - multinode.sh
       - import_image.sh
+      - node_delete.sh
   - name: upload multinode template
     copy: src=multinode.tmpl dest=/root/multinode.tmpl
 #  - name: install docker
 #    include: tasks/docker.yml
+
+- hosts: control
+  become: true
+  become_user: root
+  tasks:
+  - name: configure debian-mn environment
+    command: ./debian-mn.sh
+    register: mutli_node
+    ignore_errors: true
+
+- hosts: compute
+  become: true
+  become_user: root
+  tasks:
+  - name: congiure debian-cmp environment
+    command: ./debian-cmp.sh
+    register: compute
+    ignore_errors: true

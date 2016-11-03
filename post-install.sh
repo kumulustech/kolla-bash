@@ -28,7 +28,7 @@ tee > /root/open.rc <<EOF
 # "source this file, don't subshell" predicate inspired by
 # http://stackoverflow.com/a/23009039/6195005
 
-if [[ $_ == $0 ]] ; then
+if [[ \$_ == \$0 ]] ; then
     echo "You ran this script instead of sourcing it."
     echo "  usage: source $0"
     echo "Aborting."
