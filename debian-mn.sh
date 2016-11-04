@@ -18,7 +18,7 @@ apt-get install \
     ca-certificates \
     bridge-utils -y
 
-git clone https://github.com/JoeKuan/Network-Interfaces-Script nis
+#git clone https://github.com/JoeKuan/Network-Interfaces-Script nis
 apt-get install apt-transport-https ca-certificates -y
 apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 deb https://apt.dockerproject.org/repo ubuntu-xenial main
@@ -54,14 +54,7 @@ NEUTRON_INTERFACE="team0:0"
 elif [[ $(ip l | grep bond) ]]; then
 NETWORK_INTERFACE="bond0"
 NEUTRON_INTERFACE="bond0:0"
-NEUTRON_ADDRESS="$(ip -4 addr show ${NEUTRON_INTERFACE} | grep bond0: | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1)"
-NEUTRON_NM="$(ip -4 addr show ${NEUTRON_INTERFACE} | grep bond0: | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f2)"
-if [[ ${NEUTRON_NM} -gt 25 ]]; then
-ip a d ${NEUTRON_ADDRESS} dev ${NEUTRON_INTERFACE}
-ip a a ${NEUTRON_ADDRESS}/25 dev ${NEUTRON_INTERFACE}
-NEUTRON_NM=25
 fi
-gawk -f nis/changeInterface.awk /etc/network/interfaces device=${NEUTRON_INTERFACE} address=${NEUTRON_INTERFACE} netmask=255.255.255.128 mode=static >& /etc/network/interfaces
 
 elif [[ $(ip l | grep enp0s8) ]]; then
 NETWORK_INTERFACE="enp0s8"

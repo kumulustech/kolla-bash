@@ -17,7 +17,11 @@
 source /root/open.rc
 
 tenant=`openstack project list -f csv --quote none | grep admin | cut -d, -f1`
+
 public_network=${1:-10.1.10}
+ip a s ${public_network}.1 dev br-ex
+ip l s dev br-ex up
+
 neutron net-create public --tenant-id ${tenant} --router:external --provider:network_type flat --provider:physical_network physnet1 --shared
 #if segmented network{vlan,vxlan,gre}: --provider:segmentation_id ${segment_id}
 neutron subnet-create public ${public_network}.0/24 --tenant-id ${tenant} --allocation-pool start=${public_network}.80,end=${public_network}.99 --dns-nameserver 8.8.8.8 --disable-dhcp
@@ -36,5 +40,4 @@ default_group=`neutron security-group-list | awk '/ default / {print $2}' | tail
 neutron security-group-rule-create --direction ingress --port-range-min 22 --port-range-max 22 --protocol tcp --remote-ip-prefix 0.0.0.0/0 ${default_group} 
 neutron security-group-rule-create --direction ingress --port-range-min 80 --port-range-max 80 --protocol tcp --remote-ip-prefix 0.0.0.0/0 ${default_group}
 neutron security-group-rule-create --direction ingress --port-range-min 443 --port-range-max 443 --protocol tcp --remote-ip-prefix 0.0.0.0/0 ${default_group}
-neutron security-group-rule-create --direction ingress --port-range-min 0 --port-range-max 0 --protocol icmp --remote-ip-prefix 0.0.0.0/0 ${default_group}
-neutron security-group-rule-create --direction ingress --port-range-min 0 --port-range-max 255 --protocol icmp --remote-ip-prefix 0.0.0.0/0 default
+neutron security-group-rule-create --direction ingress --protocol icmp --remote-ip-prefix 0.0.0.0/0 ${default_group}
