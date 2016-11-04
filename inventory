@@ -1,8 +1,8 @@
 [control]
-kolla-control ansible_ssh_host=147.75.99.213
+kolla-control ansible_ssh_host=147.75.99.217
 
 [compute]
-kolla-compute ansible_ssh_host=147.75.99.247
+kolla-compute ansible_ssh_host=147.75.99.213
 
 #[all:vars]
 #domain=opsits.com

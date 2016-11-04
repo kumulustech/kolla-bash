@@ -32,6 +32,7 @@
       - multinode.sh
       - import_image.sh
       - node_delete.sh
+      - launch.sh
   - name: upload multinode template
     copy: src=multinode.tmpl dest=/root/multinode.tmpl
 

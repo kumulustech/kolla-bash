@@ -50,7 +50,7 @@ resource "packet_device" "kolla-control" {
         billing_cycle = "hourly"
         project_id = "320c2c2f-6876-4621-929a-93a47e07d2da"
         provisioner "local-exec" {
-          command = "sed -i 's/kolla-control.*/kolla-control ansible_ssh_host=${packet_device.kolla-control.network.0.address}/' inventory"
+          command = "sed -i '' -e 's/kolla-control.*/kolla-control ansible_ssh_host=${packet_device.kolla-control.network.0.address}/' inventory"
         }
 }
 
@@ -72,7 +72,7 @@ resource "packet_device" "kolla-compute" {
         billing_cycle = "hourly"
         project_id = "320c2c2f-6876-4621-929a-93a47e07d2da"
         provisioner "local-exec" {
-          command = "sed -i 's/kolla-compute.*/kolla-compute ansible_ssh_host=${packet_device.kolla-compute.network.0.address}/' inventory"
+          command = "sed -i '' -e 's/kolla-compute.*/kolla-compute ansible_ssh_host=${packet_device.kolla-compute.network.0.address}/' inventory"
         }
 }
 
