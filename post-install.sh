@@ -49,7 +49,7 @@ EOF
 
 bash ./import_image.sh
 
-bash ./add_flavors.sh
+bash ./add_flavor.sh
 
 bash ./setup_network.sh ${BASE}
 

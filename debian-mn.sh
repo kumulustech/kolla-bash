@@ -117,11 +117,11 @@ sed -i "s/^keystone_admin_password:.*/keystone_admin_password: admin1/" /etc/kol
 
 ssh kolla-compute /root/debian-cmp.sh
 
-kolla-ansible -i multinode prechecks
-if [ ! $? == 0 ]; then
-  echo prechecks failed
-  exit 1
-fi
+#kolla-ansible -i multinode prechecks
+#if [ ! $? == 0 ]; then
+#  echo prechecks failed
+#  exit 1
+#fi
 
 #kolla-ansible -i multinode deploy
 #if [ ! $? == 0 ]; then

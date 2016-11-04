@@ -11,8 +11,8 @@
 - hosts: all
   become: true
   become_user: root
-  vars:
-   domain: opsits.com
+#  vars:
+#   domain: opsits.com
   tasks:
   - name: create and update ssh for shared communications
     include: tasks/ssh.yml
@@ -34,8 +34,6 @@
       - node_delete.sh
   - name: upload multinode template
     copy: src=multinode.tmpl dest=/root/multinode.tmpl
-#  - name: install docker
-#    include: tasks/docker.yml
 
 - hosts: control
   become: true
@@ -53,4 +51,17 @@
   - name: congiure debian-cmp environment
     command: ./debian-cmp.sh
     register: compute
+    ignore_errors: true
+
+- hosts: control
+  become: true
+  become_user: root
+  tasks:
+  - name: launch openstack with kolla
+    command: kolla-ansible -i multinode deploy
+    register: deploy_multinode
+    ignore_errors: true
+  - name: run post-install config
+    command: ./post-install.sh
+    register: post_install
     ignore_errors: true
