@@ -54,8 +54,6 @@ NEUTRON_INTERFACE="team0:0"
 elif [[ $(ip l | grep bond) ]]; then
 NETWORK_INTERFACE="bond0"
 NEUTRON_INTERFACE="bond0:0"
-fi
-
 elif [[ $(ip l | grep enp0s8) ]]; then
 NETWORK_INTERFACE="enp0s8"
 NEUTRON_INTERFACE="enp0s9"

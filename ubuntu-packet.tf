@@ -16,10 +16,10 @@
 # uncomment the next three lines tocreate one, and we'll
 # use digital ocean as our DNS service
 
-variable domain_name {
-    type = "string"
-    default = "opsits.com"
-}
+#variable domain_name {
+#    type = "string"
+#    default = "opsits.com"
+#}
 
 # resource "digitalocean_domain" "${var.domain_name}" {
 #     name = "${var.domain_name}"
@@ -54,15 +54,6 @@ resource "packet_device" "kolla-control" {
         }
 }
 
-###resource "packet_device" "kolla-registry" {
-###        hostname = "kolla-registry"
-###        plan = "baremetal_0"
-###        facility = "ewr1"
-###	operating_system = "ubuntu_16_04_image"
-###        billing_cycle = "hourly"
-###        project_id = "320c2c2f-6876-4621-929a-93a47e07d2da"
-###}
-
 
 resource "packet_device" "kolla-compute" {
         hostname = "kolla-compute"
@@ -76,17 +67,26 @@ resource "packet_device" "kolla-compute" {
         }
 }
 
+###resource "packet_device" "kolla-registry" {
+###        hostname = "kolla-registry"
+###        plan = "baremetal_0"
+###        facility = "ewr1"
+###	operating_system = "ubuntu_16_04_image"
+###        billing_cycle = "hourly"
+###        project_id = "320c2c2f-6876-4621-929a-93a47e07d2da"
+###}
+
 # Add a pointer to the new IP address
 # Note that the default TTYL is 1800 seconds, so it will take
 # up to 30 minutes in this enviornment for the record to time out.
 
-resource "digitalocean_record" "kolla-control" {
-    domain = "${var.domain_name}"
-    type = "A"
-    name = "kolla-control"
-    value = "${packet_device.kolla-control.network.0.address}"
-}
-
+#resource "digitalocean_record" "kolla-control" {
+#    domain = "${var.domain_name}"
+#    type = "A"
+#    name = "kolla-control"
+#    value = "${packet_device.kolla-control.network.0.address}"
+#}
+#
 ###resource "digitalocean_record" "kolla-registry" {
 ###    domain = "${var.domain_name}"
 ###    type = "A"
@@ -94,9 +94,9 @@ resource "digitalocean_record" "kolla-control" {
 ###    value = "${packet_device.kolla-registry.network.0.address}"
 ###}
 
-resource "digitalocean_record" "kolla-compute" {
-    domain = "${var.domain_name}"
-    type = "A"
-    name = "kolla-compute"
-    value = "${packet_device.kolla-compute.network.0.address}"
-}
+#resource "digitalocean_record" "kolla-compute" {
+#    domain = "${var.domain_name}"
+#    type = "A"
+#    name = "kolla-compute"
+#    value = "${packet_device.kolla-compute.network.0.address}"
+#}
