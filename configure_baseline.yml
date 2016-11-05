@@ -66,3 +66,5 @@
     command: ./post-install.sh
     register: post_install
     ignore_errors: true
+  - name: enable masquerade (NAT) on external interface
+    include: tasks/masq.yml
