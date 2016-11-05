@@ -51,6 +51,7 @@ bash ./import_image.sh
 
 bash ./add_flavor.sh
 
-bash ./setup_network.sh ${BASE}
+#bash ./setup_network.sh ${BASE}
+bash ./setup_network.sh
 
 echo "Login using http://${ADDRESS} with default as domain,  admin as username, and $(cat /etc/kolla/passwords.yml | grep "keystone_admin_password" | awk '{print $2}') as password"
