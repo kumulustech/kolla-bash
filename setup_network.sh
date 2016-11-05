@@ -19,7 +19,7 @@ source /root/open.rc
 tenant=`openstack project list -f csv --quote none | grep admin | cut -d, -f1`
 
 public_network=${1:-10.1.10}
-ip a a ${public_network}.1 dev br-ex
+ip a a ${public_network}.1/24 dev br-ex
 ip l s br-ex up
 
 neutron net-create public --tenant-id ${tenant} --router:external --provider:network_type flat --provider:physical_network physnet1 --shared
