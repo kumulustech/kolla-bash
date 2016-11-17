@@ -2,6 +2,19 @@
 
 As with any installation, there are certain pre-requisites that need to be in place.  For simple "devstack" like usage, we can pull from the Hub.docker.io registry, and simply leverage/extend the default kolla driven ansible inventory to manage deployment.
 
+## Quick Start
+
+0) git clone https://github.com/kumulustech/kolla-bash -b ubuntu
+1) ensure you are in the ubuntu branch
+cd kolla-bash
+git checkout ubuntu
+2) get your packet API key (create one in the API section of the WebUI) and add it to the environment PACKET_AUTH_TOKEN
+export PACKET_AUTH_TOKEN=GET_PACKET_AUTH_TOKEN_FROM_API_PAGES
+3) update the project ID in the ubuntu-project.tf file (you can find this in the packet UI, once you select the specific project, it is in the URL or on the settings page in the project)
+4) terraform plan
+5) terraform apply
+6) ansible-playbook -i inventory configure_baseline.yml
+
 ## Launch an "All-in-one" instance
 
 This script sets up some prerequisites agains a CentOS or Ubuntu based instance, then, using the Kolla tools, launches a pull of the upstream (hub.docker) registered images. It runs the ansible deploy script, and at the end it _should_ have a running baseline OpenStack enviornment stood up.
