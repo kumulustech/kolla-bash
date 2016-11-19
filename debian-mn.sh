@@ -43,7 +43,7 @@ systemctl restart docker
 pip install ansible==2.1.2.0
 pip install docker-py
 
-git clone https://github.com/openstack/kolla
+git clone https://github.com/openstack/kolla -b stable/newton
 pip install kolla/
 
 cp -r /usr/local/share/kolla/etc_examples/kolla /etc/
