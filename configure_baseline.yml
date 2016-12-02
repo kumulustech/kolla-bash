@@ -2,11 +2,15 @@
 - hosts: localhost
   connection: local
   tasks:
+  - name: find local ssh keys
+    find: path='./' patterns='id_rsa.*'
+    register: ssh_found
   - name: create ssh key
     command: ssh-keygen -t rsa -N '' -f id_rsa
     run_once: true
     delegate_to: localhost
     ignore_errors: yes
+    when: ssh_found.matched == 0
 
 - hosts: all
   become: true
