@@ -78,8 +78,9 @@ sed -i "s/^#network_interface:.*/network_interface: \"${NETWORK_INTERFACE}\"/g" 
 
 if [[ -z $(grep neutron_bridge_name ${GLOBALS_FILE}) ]]; then
 cat >> ${GLOBALS_FILE} <<EOF
-enable_neutron_lbaas: "yes"
-enable_neutron_vpnaas: "yes"
+#enable_neutron_lbaas: "yes"
+#enable_neutron_vpnaas: "yes"
+enable_mongodb: "yes"
 enable_ceilometer: "yes"
 enable_gnocchi: "yes"
 enable_grafana: "yes"
