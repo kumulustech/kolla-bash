@@ -55,17 +55,17 @@ resource "packet_device" "kolla-control" {
 }
 
 
-resource "packet_device" "kolla-compute" {
-        hostname = "kolla-compute"
-        plan = "baremetal_1"
-        facility = "ewr1"
-        operating_system = "ubuntu_16_04_image"
-        billing_cycle = "hourly"
-        project_id = "320c2c2f-6876-4621-929a-93a47e07d2da"
-        provisioner "local-exec" {
-          command = "sed -i '' -e 's/kolla-compute.*/kolla-compute ansible_ssh_host=${packet_device.kolla-compute.network.0.address}/' inventory"
-        }
-}
+#resource "packet_device" "kolla-compute" {
+#        hostname = "kolla-compute"
+#        plan = "baremetal_1"
+#        facility = "ewr1"
+#        operating_system = "ubuntu_16_04_image"
+#        billing_cycle = "hourly"
+#        project_id = "320c2c2f-6876-4621-929a-93a47e07d2da"
+#        provisioner "local-exec" {
+#          command = "sed -i '' -e 's/kolla-compute.*/kolla-compute ansible_ssh_host=${packet_device.kolla-compute.network.0.address}/' inventory"
+#        }
+#}
 
 ###resource "packet_device" "kolla-registry" {
 ###        hostname = "kolla-registry"

@@ -1,8 +1,8 @@
 [control]
-kolla-control ansible_ssh_host=1.1.1.1
+kolla-control ansible_ssh_host=147.75.106.151
 
 [compute]
-kolla-compute ansible_ssh_host=1.1.1.2
+kolla-control ansible_ssh_host=147.75.106.151
 
 [all:vars]
 ansible_ssh_user=root

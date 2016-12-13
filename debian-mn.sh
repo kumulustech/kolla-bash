@@ -78,6 +78,12 @@ sed -i "s/^#network_interface:.*/network_interface: \"${NETWORK_INTERFACE}\"/g" 
 
 if [[ -z $(grep neutron_bridge_name ${GLOBALS_FILE}) ]]; then
 cat >> ${GLOBALS_FILE} <<EOF
+enable_neutron_lbaas: "yes"
+enable_neutron_vpnaas: "yes"
+enable_ceilometer: "yes"
+enable_gnocchi: "yes"
+enable_grafana: "yes"
+enable_aodh: "yes"
 enable_haproxy: "no"
 enable_keepalived: "no"
 kolla_base_distro: "ubuntu"
@@ -104,8 +110,8 @@ kolla-genpwd
 
 sed -i "s/^keystone_admin_password:.*/keystone_admin_password: admin1/" /etc/kolla/passwords.yml
 
-./multinode.sh kolla-control kolla-compute
-
+#./multinode.sh kolla-control kolla-compute
+./multinode.sh kolla-control kolla-control
 ssh kolla-compute /root/debian-cmp.sh
 
 #kolla-ansible -i multinode prechecks
