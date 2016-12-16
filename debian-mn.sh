@@ -80,7 +80,8 @@ if [[ -z $(grep neutron_bridge_name ${GLOBALS_FILE}) ]]; then
 cat >> ${GLOBALS_FILE} <<EOF
 #enable_neutron_lbaas: "yes"
 #enable_neutron_vpnaas: "yes"
-enable_mongodb: "yes"
+#enable_mongodb: "yes"
+ceilometer_database_type: "gnocchi"
 enable_ceilometer: "yes"
 enable_gnocchi: "yes"
 enable_grafana: "yes"
