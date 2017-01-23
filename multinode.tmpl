@@ -1,7 +1,7 @@
 # These initial groups are the only groups required to be modified. The
 # additional groups are for more control of the environment.
 [control]
-
+control
 # These hostname must be resolvable from your deployment host
 #__CONTROL__
 
@@ -11,12 +11,18 @@
 # The network nodes are where your l3-agent and loadbalancers will run
 # This can be the same as a host in the control group
 [network]
+control
 #__CONTROL__
 
 [compute]
+control
+node-1
+node-2
+node-3
 #__COMPUTE__
 
 [monitoring]
+control
 #__CONTROL__
 
 # When compute nodes and control nodes use different interfaces,

@@ -1,6 +1,16 @@
 ---
+- hosts: all
+  gather_facts: False
+  become: true
+  become_user: root
+  tasks:
+  - name: install python 2
+    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
 - hosts: localhost
   connection: local
+  become: true
+  become_user: root
   tasks:
   - name: find local ssh keys
     find: path='./' patterns='id_rsa.*'
@@ -38,14 +48,14 @@
       - node_delete.sh
       - launch.sh
   - name: upload multinode template
-    copy: src=multinode.tmpl dest=/root/multinode.tmpl
+    copy: src=multinode.tmpl dest=/root/multinode
 
 - hosts: control
   become: true
   become_user: root
   tasks:
   - name: configure debian-mn environment
-    command: ./debian-mn.sh
+    command: /root/debian-mn.sh
     register: mutli_node
     ignore_errors: true
 
@@ -54,7 +64,7 @@
   become_user: root
   tasks:
   - name: congiure debian-cmp environment
-    command: ./debian-cmp.sh
+    command: /root/debian-cmp.sh
     register: compute
     ignore_errors: true
 
@@ -63,11 +73,11 @@
   become_user: root
   tasks:
   - name: launch openstack with kolla
-    command: kolla-ansible -i multinode deploy
+    command: kolla-ansible -i /root/multinode deploy
     register: deploy_multinode
     ignore_errors: true
   - name: run post-install config
-    command: ./post-install.sh
+    command: /root/post-install.sh
     register: post_install
     ignore_errors: true
   - name: enable masquerade (NAT) on external interface

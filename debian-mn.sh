@@ -24,7 +24,7 @@ apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E8
 deb https://apt.dockerproject.org/repo ubuntu-xenial main
 echo 'deb https://apt.dockerproject.org/repo ubuntu-xenial main' > /etc/apt/sources.list.d/docker.list
 apt-get update
-apt-get install docker-engine -y
+apt-get install docker-engine=1.12.6-0~ubuntu-xenial -y
 
 apt-get purge lxc lxd -y
 pip install -U pip
@@ -104,15 +104,17 @@ kolla-genpwd
 
 sed -i "s/^keystone_admin_password:.*/keystone_admin_password: admin1/" /etc/kolla/passwords.yml
 
-./multinode.sh kolla-control kolla-compute
+./multinode.sh control node-1
+./multinode.sh control node-2
 
-ssh kolla-compute /root/debian-cmp.sh
+ssh node-1 /root/debian-cmp.sh
+ssh node-2 /root/debian-cmp.sh
 
-#kolla-ansible -i multinode prechecks
-#if [ ! $? == 0 ]; then
-#  echo prechecks failed
-#  exit 1
-#fi
+kolla-ansible -i multinode prechecks
+if [ ! $? == 0 ]; then
+  echo prechecks failed
+  exit 1
+fi
 
 #kolla-ansible -i multinode deploy
 #if [ ! $? == 0 ]; then

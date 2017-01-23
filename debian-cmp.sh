@@ -23,7 +23,7 @@ apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E8
 deb https://apt.dockerproject.org/repo ubuntu-xenial main
 echo 'deb https://apt.dockerproject.org/repo ubuntu-xenial main' > /etc/apt/sources.list.d/docker.list
 apt-get update
-apt-get install docker-engine -y
+apt-get install docker-engine=1.12.6-0~ubuntu-xenial -y
 
 apt-get purge lxc lxd -y
 mkdir -p /etc/systemd/system/docker.service.d
