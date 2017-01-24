@@ -2,6 +2,9 @@
 
 apt-get update
 apt-get dist-upgrade -y
+#apt-get install curl \
+#    linux-image-extra-$(uname -r) \
+#    linux-image-extra-virtual -y
 apt-get install \
     python-pip \
     vim \
@@ -43,8 +46,8 @@ systemctl restart docker
 pip install ansible==2.1.2.0
 pip install docker-py
 
-git clone https://github.com/openstack/kolla -b stable/newton
-pip install kolla/
+git clone https://github.com/openstack/kolla -b stable/newton /root/kolla/
+pip install /root/kolla/
 
 cp -r /usr/local/share/kolla/etc_examples/kolla /etc/
 
@@ -80,6 +83,7 @@ if [[ -z $(grep neutron_bridge_name ${GLOBALS_FILE}) ]]; then
 cat >> ${GLOBALS_FILE} <<EOF
 enable_haproxy: "no"
 enable_keepalived: "no"
+enable_cinder: "yes"
 kolla_base_distro: "ubuntu"
 kolla_install_type: "source"
 openstack_release: "3.0.0"
@@ -104,17 +108,17 @@ kolla-genpwd
 
 sed -i "s/^keystone_admin_password:.*/keystone_admin_password: admin1/" /etc/kolla/passwords.yml
 
-./multinode.sh control node-1
-./multinode.sh control node-2
+#./multinode.sh control node-1
+#./multinode.sh control node-2
 
-ssh node-1 /root/debian-cmp.sh
-ssh node-2 /root/debian-cmp.sh
+#ssh node-1 /root/debian-cmp.sh
+#ssh node-2 /root/debian-cmp.sh
 
-kolla-ansible -i multinode prechecks
-if [ ! $? == 0 ]; then
-  echo prechecks failed
-  exit 1
-fi
+#kolla-ansible -i multinode prechecks
+#if [ ! $? == 0 ]; then
+#  echo prechecks failed
+#  exit 1
+#fi
 
 #kolla-ansible -i multinode deploy
 #if [ ! $? == 0 ]; then

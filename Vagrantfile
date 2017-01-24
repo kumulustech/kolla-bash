@@ -29,7 +29,8 @@ $os = 'ubuntu'
 $provider_boxes = {
   :virtualbox => {
     'ubuntu' => {
-      :box_name => 'ubuntu/xenial64',
+      :box_name => 'kumulus/xenial64',
+      :box_url => 'https://www.dropbox.com/s/z8rb65j7w5ym820/dual-xenial.box?dl=1',
     }
   },
   :libvirt => {
@@ -52,7 +53,7 @@ else #  windows?
 end
 
 # Give VM 1024MB of RAM by default
-$vm_control_mem = (ENV['CONTRL_MEMORY'] || 4096).to_i
+$vm_control_mem = (ENV['CONTRL_MEMORY'] || 6144).to_i
 $vm_node_mem = (ENV['NODE_MEMORY'] || 2048).to_i
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -131,11 +132,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # Kubernetes control
-  node_vm_name="control"
-  config.vm.define node_vm_name do |c|
-    customize_vm c, $vm_control_mem, node_vm_name
+  config.vm.define 'control' do |c|
+    customize_vm c, $vm_control_mem, 'control'
     #c.vm.provision "shell", run: "once", path: "control-ubuntu.sh"
-    c.vm.hostname = node_vm_name
+    c.vm.hostname = 'control'
     c.vm.network "private_network", ip: "#{$control_ip}"
     c.vm.network "private_network", ip: "#{$control_alt_ip}"
   end

@@ -2,6 +2,9 @@
 
 apt-get update
 apt-get dist-upgrade -y
+#apt-get install curl \
+#    linux-image-extra-$(uname -r) \
+#    linux-image-extra-virtual -y
 apt-get install \
     python-pip \
     vim \
@@ -16,7 +19,6 @@ apt-get install \
     apt-transport-https \
     ca-certificates \
     bridge-utils -y
-
 
 apt-get install apt-transport-https ca-certificates -y
 apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
@@ -70,4 +72,3 @@ virt_type=qemu
 EOF
 fi
 fi
-
