@@ -1,0 +1,59 @@
+---
+- hosts: sys1
+  tasks:
+  - name: update ssh key
+    authorized_key:
+      user: root
+      state: present
+      key: https://github.com/{{user}}.keys
+- hosts: sys2
+  tasks:
+  - name: update ssh key
+    authorized_key:
+      user: root
+      state: present
+      key: https://github.com/{{user}}.keys
+- hosts: sys3
+  tasks:
+  - name: update ssh key
+    authorized_key:
+      user: root
+      state: present
+      key: https://github.com/{{user}}.keys
+- hosts: sys4
+  tasks:
+  - name: update ssh key
+    authorized_key:
+      user: root
+      state: present
+      key: https://github.com/{{user}}.keys
+- hosts: sys5
+  tasks:
+  - name: update ssh key
+    authorized_key:
+      user: root
+      state: present
+      key: https://github.com/{{user}}.keys
+- hosts: sys6
+  tasks:
+  - name: update ssh key
+    authorized_key:
+      user: root
+      state: present
+      key: https://github.com/{{user}}.keys
+- hosts: sys7
+  tasks:
+  - name: update ssh key
+    authorized_key:
+      user: root
+      state: present
+      key: https://github.com/{{user}}.keys
+- hosts: sys8
+  tasks:
+  - name: update ssh key
+    authorized_key:
+      user: root
+      state: present
+      key: https://github.com/{{user}}.keys
+  
+   
