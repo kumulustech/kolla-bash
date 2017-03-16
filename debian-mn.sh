@@ -1,7 +1,7 @@
 #!/bin/bash
 
 apt-get update
-apt-get dist-upgrade -y
+apt-get dist-upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" 
 apt-get install \
     python-pip \
     vim \
@@ -21,7 +21,7 @@ apt-get install \
 #git clone https://github.com/JoeKuan/Network-Interfaces-Script nis
 apt-get install apt-transport-https ca-certificates -y
 apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-deb https://apt.dockerproject.org/repo ubuntu-xenial main
+#deb https://apt.dockerproject.org/repo ubuntu-xenial main
 echo 'deb https://apt.dockerproject.org/repo ubuntu-xenial main' > /etc/apt/sources.list.d/docker.list
 apt-get update
 apt-get install docker-engine -y
@@ -29,7 +29,7 @@ apt-get install docker-engine -y
 apt-get purge lxc lxd -y
 pip install -U pip
 mkdir -p /etc/systemd/system/docker.service.d
-if [[ -z $(grep shared /etc/systemd/system/docker.service.d/kolla.conf) ]]; then
+if [[ -f /etc/systemd/system/docker.service.d/kolla.conf && -z $(grep shared /etc/systemd/system/docker.service.d/kolla.conf) ]]; then
 tee /etc/systemd/system/docker.service.d/kolla.conf <<-EOF
 [Service]
 MountFlags=shared
@@ -43,8 +43,10 @@ systemctl restart docker
 pip install ansible==2.1.2.0
 pip install docker-py
 
-git clone https://github.com/openstack/kolla -b stable/newton
-pip install kolla/
+#git clone https://github.com/openstack/kolla -b stable/newton
+#pip install kolla/
+
+pip install kolla=4.0.0 kolla-ansible=4.0.0
 
 cp -r /usr/local/share/kolla/etc_examples/kolla /etc/
 
@@ -103,8 +105,6 @@ fi
 kolla-genpwd
 
 sed -i "s/^keystone_admin_password:.*/keystone_admin_password: admin1/" /etc/kolla/passwords.yml
-
-./multinode.sh kolla-control kolla-compute
 
 ssh kolla-compute /root/debian-cmp.sh
 

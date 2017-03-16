@@ -16,14 +16,35 @@
 # uncomment the next three lines tocreate one, and we'll
 # use digital ocean as our DNS service
 
-#variable domain_name {
-#    type = "string"
-#    default = "opsits.com"
-#}
+variable domain_name {
+    type = "string"
+    default = "cloudsushi.io"
+}
+
+variable control_name {
+    type = "string"
+    default = "control"
+}
+
+variable compute_name {
+    type = "string"
+    default = "compute"
+}
+
+variable project_id {
+    type = "string"
+    default =  "320c2c2f-6876-4621-929a-93a47e07d2da"
+}
 
 # resource "digitalocean_domain" "${var.domain_name}" {
 #     name = "${var.domain_name}"
 # }
+
+## DNSimple
+#provider "dnsimple" {
+#    token = "${var.dnsimple_token}"
+#    email = "${var.dnsimple_email}"
+#}
 
 # packet images:
 # ubuntu_16_04_image
@@ -42,30 +63,51 @@
 # baremetal_2
 # baremetal_4
 
-resource "packet_device" "kolla-control" {
-        hostname = "kolla-control"
-        plan = "baremetal_0"
-        facility = "ewr1"
-        operating_system = "ubuntu_16_04_image"
-        billing_cycle = "hourly"
-        project_id = "320c2c2f-6876-4621-929a-93a47e07d2da"
-        provisioner "local-exec" {
-          command = "sed -i '' -e 's/kolla-control.*/kolla-control ansible_ssh_host=${packet_device.kolla-control.network.0.address}/' inventory"
-        }
-}
-
-
-resource "packet_device" "kolla-compute" {
-        hostname = "kolla-compute"
+resource "packet_device" "control" {
+        hostname = "${var.control_name}"
         plan = "baremetal_1"
-        facility = "ewr1"
+        facility = "ams1"
         operating_system = "ubuntu_16_04_image"
         billing_cycle = "hourly"
         project_id = "320c2c2f-6876-4621-929a-93a47e07d2da"
         provisioner "local-exec" {
-          command = "sed -i '' -e 's/kolla-compute.*/kolla-compute ansible_ssh_host=${packet_device.kolla-compute.network.0.address}/' inventory"
+          command = "sed -i '' -e 's/^${var.control_name}.*/${var.control_name} ansible_ssh_host=${packet_device.control.network.0.address}/' inventory"
         }
 }
+
+# Create a new block volume
+resource "packet_volume" "control_vol" {
+    description = "${var.control_name}_vol"
+    facility = "ams1"
+    project_id = "${var.project_id}"
+    plan = "storage_1"
+    size = 10
+    billing_cycle = "hourly"
+}
+
+
+resource "packet_device" "compute" {
+        hostname = "${var.compute_name}"
+        plan = "baremetal_1"
+        facility = "ams1"
+        operating_system = "ubuntu_16_04_image"
+        billing_cycle = "hourly"
+        project_id = "${var.project_id}"
+        provisioner "local-exec" {
+          command = "sed -i '' -e 's/^${var.compute_name}.*/${var.compute_name} ansible_ssh_host=${packet_device.compute.network.0.address}/' inventory"
+        }
+}
+
+# Create a new block volume
+resource "packet_volume" "compute_vol" {
+    description = "${var.compute_name}_vol"
+    facility = "ams1"
+    project_id = "${var.project_id}"
+    plan = "storage_1"
+    size = 10
+    billing_cycle = "hourly"
+}
+
 
 ###resource "packet_device" "kolla-registry" {
 ###        hostname = "kolla-registry"
@@ -80,23 +122,23 @@ resource "packet_device" "kolla-compute" {
 # Note that the default TTYL is 1800 seconds, so it will take
 # up to 30 minutes in this enviornment for the record to time out.
 
-#resource "digitalocean_record" "kolla-control" {
-#    domain = "${var.domain_name}"
-#    type = "A"
-#    name = "kolla-control"
-#    value = "${packet_device.kolla-control.network.0.address}"
-#}
-#
+resource "dnsimple_record" "control" {
+    domain = "${var.domain_name}"
+    type = "A"
+    name = "${var.control_name}"
+    value = "${packet_device.control.network.0.address}"
+}
+
+resource "dnsimple_record" "compute" {
+    domain = "${var.domain_name}"
+    type = "A"
+    name = "${var.compute_name}"
+    value = "${packet_device.compute.network.0.address}"
+}
+
 ###resource "digitalocean_record" "kolla-registry" {
 ###    domain = "${var.domain_name}"
 ###    type = "A"
 ###    name = "kolla-registry"
 ###    value = "${packet_device.kolla-registry.network.0.address}"
 ###}
-
-#resource "digitalocean_record" "kolla-compute" {
-#    domain = "${var.domain_name}"
-#    type = "A"
-#    name = "kolla-compute"
-#    value = "${packet_device.kolla-compute.network.0.address}"
-#}
