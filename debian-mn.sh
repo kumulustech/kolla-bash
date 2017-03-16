@@ -24,9 +24,9 @@ apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E8
 #deb https://apt.dockerproject.org/repo ubuntu-xenial main
 echo 'deb https://apt.dockerproject.org/repo ubuntu-xenial main' > /etc/apt/sources.list.d/docker.list
 apt-get update
-apt-get install docker-engine -y
-
 apt-get purge lxc lxd -y
+apt-get install docker-engine=1.12.6 -y
+
 pip install -U pip
 mkdir -p /etc/systemd/system/docker.service.d
 if [[ -f /etc/systemd/system/docker.service.d/kolla.conf && -z $(grep shared /etc/systemd/system/docker.service.d/kolla.conf) ]]; then
@@ -40,13 +40,8 @@ systemctl daemon-reload
 systemctl enable docker
 systemctl restart docker
 
-pip install ansible==2.1.2.0
+pip install ansible==2.1.2.0 docker-py kolla=4.0.0 kolla-ansible=4.0.0
 pip install docker-py
-
-#git clone https://github.com/openstack/kolla -b stable/newton
-#pip install kolla/
-
-pip install kolla=4.0.0 kolla-ansible=4.0.0
 
 cp -r /usr/local/share/kolla/etc_examples/kolla /etc/
 
@@ -106,7 +101,6 @@ kolla-genpwd
 
 sed -i "s/^keystone_admin_password:.*/keystone_admin_password: admin1/" /etc/kolla/passwords.yml
 
-ssh kolla-compute /root/debian-cmp.sh
 
 #kolla-ansible -i multinode prechecks
 #if [ ! $? == 0 ]; then
