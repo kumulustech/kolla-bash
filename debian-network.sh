@@ -23,17 +23,19 @@ GLOBALS_FILE="/etc/kolla/globals.yml"
 ADDRESS="$(ip -4 addr show ${NETWORK_INTERFACE} | grep "inet" | head -1 |awk '{print $2}' | cut -d/ -f1)"
 
 VIP="${ADDRESS}"
-
+if [ ! -f /etc/kolla/globals.yml ]; then
 cat >> ${GLOBALS_FILE} <<EOF
-kolla_internal_vip_address: \"${VIP}\"
-network_interface: \"${NETWORK_INTERFACE}\"
-neutron_external_interface: \"${NEUTRON_INTERFACE}\"
+---
+kolla_internal_vip_address: "${VIP}"
+network_interface: "${NETWORK_INTERFACE}"
+neutron_external_interface: "${NEUTRON_INTERFACE}"
 enable_haproxy: "no"
 enable_keepalived: "no"
 kolla_base_distro: "ubuntu"
 kolla_install_type: "source"
 openstack_release: "3.0.0"
 EOF
+fi
 
 if [ `egrep -c 'vmx|svm|0xc0f' /proc/cpuinfo` == '0' ] ;then
 if [ ! -f /etc/kolla/config/nova/nova-compute.conf ]; then
@@ -45,6 +47,8 @@ EOF
 fi
 fi
 
+if [ -f /etc/kolla/passwords.yml ]; then
 kolla-genpwd
 sed -i "s/^keystone_admin_password:.*/keystone_admin_password: admin1/" /etc/kolla/passwords.yml
+fi
 

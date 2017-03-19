@@ -79,6 +79,12 @@
   - kolla==4.0.0
   - kolla-ansible==4.0.0
 
+- name: mkdir the /etc/kolla directory
+  file:
+    dest: /etc/kolla/
+    state: directory
+    mode: 0755
+
 - name: copy default passwords file
   copy:
     src: files/passwords.yml
