@@ -25,9 +25,7 @@
     copy: src={{item}} dest=/root/{{item}} mode=0755
     with_items:
       - add_flavor.sh
-      - debian-mn.sh
       - post-install.sh
-      - debian-cmp.sh
       - setup_network.sh
       - import_image.sh
       - node_delete.sh
@@ -35,23 +33,8 @@
   - name: upload multinode template
     template: src=templates/multinode.j2 dest=/root/multinode
 
-- hosts: control
-  become: true
-  become_user: root
-  tasks:
-  - name: configure debian-mn environment
-    command: /root/debian-mn.sh
-    register: mutli_node
-    ignore_errors: true
-
-- hosts: compute
-  become: true
-  become_user: root
-  tasks:
-  - name: congiure debian-cmp environment
-    command: /root/debian-cmp.sh
-    register: compute
-    ignore_errors: true
+  - name: include deployment for debian hosts
+    include: debian.yml
 
 - hosts: control
   become: true

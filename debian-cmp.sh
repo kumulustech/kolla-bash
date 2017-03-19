@@ -1,4 +1,5 @@
 #!/bin/bash
+exit 0
 
 apt-get update
 apt-get dist-upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"

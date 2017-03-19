@@ -1,5 +1,5 @@
 #!/bin/bash
-
+exit 0
 apt-get update
 apt-get dist-upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" 
 apt-get install \
@@ -25,7 +25,7 @@ apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E8
 echo 'deb https://apt.dockerproject.org/repo ubuntu-xenial main' > /etc/apt/sources.list.d/docker.list
 apt-get update
 apt-get purge lxc lxd -y
-apt-get install docker-engine=1.12.6 -y
+apt-get install docker-engine=1.12.6-0~ubuntu-xenial -y
 
 pip install -U pip
 mkdir -p /etc/systemd/system/docker.service.d
@@ -40,10 +40,10 @@ systemctl daemon-reload
 systemctl enable docker
 systemctl restart docker
 
-pip install ansible==2.1.2.0 docker-py kolla=4.0.0 kolla-ansible=4.0.0
+pip install ansible==2.1.2.0 docker-py kolla==4.0.0 kolla-ansible==4.0.0
 pip install docker-py
 
-cp -r /usr/local/share/kolla/etc_examples/kolla /etc/
+cp -r /usr/local/share/kolla-ansilbe/etc_examples/kolla /etc/
 
 if [[ $(ip l | grep team) ]]; then
 NETWORK_INTERFACE="team0"
