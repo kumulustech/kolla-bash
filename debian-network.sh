@@ -33,7 +33,7 @@ enable_haproxy: "no"
 enable_keepalived: "no"
 kolla_base_distro: "ubuntu"
 kolla_install_type: "source"
-openstack_release: "3.0.0"
+openstack_release: "4.0.0"
 EOF
 fi
 
