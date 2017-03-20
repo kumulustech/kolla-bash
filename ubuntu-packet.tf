@@ -43,6 +43,7 @@ variable project_id {
 ## DNSimple
 #provider "dnsimple" {
 #    token = "${var.dnsimple_token}"
+#    account = "${var.dnsimple_account}"
 #    email = "${var.dnsimple_email}"
 #}
 
