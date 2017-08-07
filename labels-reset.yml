@@ -1,0 +1,27 @@
+---
+- hosts: all
+  tasks:
+  - name: umount disks
+    shell: for n in /var/lib/ceph/osd/* ; do umount $n ; rm -rf $n; done
+    ignore_errors: true
+  - name: dd disks
+    command:  dd if=/dev/zero of=/dev/{{item}} count=10000 bs=1M
+    with_items:
+      - sda
+      - sdb
+      - sdc
+      - sdd
+      - sde
+      - sdf
+      - sdg
+  - name: ceph label
+    command: parted /dev/{{item}} -s -- mklabel gpt mkpart KOLLA_CEPH_OSD_BOOTSTRAP 1 -1
+    with_items:
+      - sda
+      - sdb
+      - sdc
+      - sdd
+      - sde
+      - sdf
+  - name: cache label
+    command: parted /dev/sdg -s -- mklabel gpt mkpart KOLLA_CEPH_OSD_CACHE_BOOTSTRAP 1 -1

@@ -6,6 +6,9 @@ NEUTRON_INTERFACE="team0:0"
 elif [[ $(ip l | grep bond) ]]; then
 NETWORK_INTERFACE="bond0"
 NEUTRON_INTERFACE="bond0:0"
+elif [[ $(ip l | grep eth0) ]]; then
+NETWORK_INTERFACE="eth0"
+NEUTRON_INTERFACE="eth0.2"
 elif [[ $(ip l | grep enp0s8) ]]; then
 NETWORK_INTERFACE="enp0s8"
 NEUTRON_INTERFACE="enp0s9"

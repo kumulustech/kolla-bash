@@ -13,8 +13,6 @@
 [compute]
 {% for host in groups['control'] %}{{host}}
 {% endfor %}
-{% for host in groups['compute'] %}{{host}}
-{% endfor %}
 
 [monitoring]
 {% for host in groups['control'] %}{{host}}

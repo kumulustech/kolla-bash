@@ -1,0 +1,68 @@
+# Create a Virtual Machine
+
+# One can provide the Digital Ocean access token via numerous methods
+# including passing a variable (from another file, a file passed from the CLI)
+# or as an environment variable: export DIGITALOCEAN_TOKEN='xxxx'
+# provider "digitalocean" {
+#     token = "${var.do_token}"
+# }
+
+# images:
+#  - ubuntu-15-10-x64
+#  - ubuntu-14-04-x64
+#  - centos-7-0-x64
+#  - coreos-beta
+#  Provision via external ansible, but create the inventory
+resource "digitalocean_volume" "ceph" {
+  region      = "sfo2"
+  name        = "ceph-${count.index}"
+  count       = 3
+  size        = 100
+  description = "ceph volume"
+}
+resource "digitalocean_volume" "ceph-j" {
+  region      = "sfo2"
+  name        = "ceph-j-${count.index}"
+  count       = 3
+  size        = 100
+  description = "ceph journal volume"
+}
+resource "digitalocean_volume" "ceph-c" {
+  region      = "sfo2"
+  name        = "ceph-c-${count.index}"
+  count       = 3
+  size        = 100
+  description = "ceph cache volume"
+}
+
+resource "digitalocean_droplet" "kolla" {
+    image = "ubuntu-16-04-x64"
+    name = "kolla-${count.index}"
+    region = "sfo2"
+    size = "8gb"
+    ssh_keys = ["778729"]
+    count = 3
+    volume_ids = ["${element(digitalocean_volume.ceph.*.id,count.index)}","${element(digitalocean_volume.ceph-j.*.id,count.index)}","${element(digitalocean_volume.ceph-c.*.id,count.index)}"]
+##    provisioner "remote-exec" {
+##      inline = [
+##        "sudo apt-get update && sudo apt-get -y install python-minimal",
+##      ]
+##  
+##      connection {
+##        type     = "ssh"
+##        private_key = "${file("~/.ssh/id_rsa")}"
+##        user     = "root"
+##        timeout  = "2m"
+##      } 
+##    }
+    provisioner "local-exec" {
+      command = "echo kolla-${count.index} ansible_ssh_host=kolla-${count.index}.opsits.com ansible_connection=ssh ansible_ssh_user=root >> inventory"
+    }
+}
+resource "digitalocean_record" "kolla" {
+    domain = "opsits.com"
+    type = "A"
+    count = 3
+    name = "kolla-${count.index}"
+    value = "${element(digitalocean_droplet.kolla.*.ipv4_address,count.index)}"
+}

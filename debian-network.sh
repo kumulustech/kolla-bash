@@ -12,6 +12,22 @@ elif [[ $(ip l | grep enp0s8) ]]; then
 NETWORK_INTERFACE="enp0s8"
 NEUTRON_INTERFACE="enp0s9"
 ifup enp0s9
+elif [[ $(ip l | grep eth0) ]]; then
+NETWORK_INTERFACE="eth0"
+NEUTRON_INTERFACE="eth0.2"
+vlan-raw-device eth1
+modprobe 8021q
+vconfig add eth0 2
+
+cat > /etc/network/interfaces.d/vlan2 <<EOF
+auto eth0.2
+iface eth0.2 inet manual
+  vlan-raw-device eth0
+EOF
+
+cat > /etc/modprobe.d/vlan.conf <<EOF
+8021q
+EOF
 else
 echo "Can't figure out network interface, please manually edit"
 exit 1
@@ -30,10 +46,22 @@ kolla_internal_vip_address: "${VIP}"
 network_interface: "${NETWORK_INTERFACE}"
 neutron_external_interface: "${NEUTRON_INTERFACE}"
 enable_haproxy: "no"
-enable_keepalived: "no"
 kolla_base_distro: "ubuntu"
 kolla_install_type: "source"
 openstack_release: "4.0.0"
+enable_ceph: "yes"
+enable_ceph_rgw: "yes"
+ceph_enable_cache: "yes"
+ceph_pool_type: "erasure"
+enable_ceph_rgw_keystone: "yes"
+glance_backend_ceph: "yes"
+gnocchi_backend_storage: "{{ 'ceph' if enable_ceph|bool else 'file' }}"
+enable_cinder: "yes"
+cinder_backend_ceph: "{{ enable_ceph }}"
+cinder_backup_driver: "swift"
+nova_backend_ceph: "{{ enable_ceph }}"
+external_journal: false
+ceph_erasure_profile: "k=3 m=1 ruleset-failure-domain=host"
 EOF
 fi
 
