@@ -62,6 +62,8 @@ cinder_backup_driver: "swift"
 nova_backend_ceph: "{{ enable_ceph }}"
 external_journal: false
 ceph_erasure_profile: "k=3 m=1 ruleset-failure-domain=host"
+enable_trove: "yes"
+enable_horizon_trove: "{{ enable_trove | bool }}"
 EOF
 fi
 

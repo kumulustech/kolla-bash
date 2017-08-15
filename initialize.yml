@@ -91,6 +91,7 @@
     - setuptools
     - docker-py 
     - ansible
+    - pyopenssl
     - kolla==4.0.0
     - kolla-ansible==4.0.0
   
