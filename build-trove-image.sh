@@ -39,6 +39,12 @@ export DIB_CLOUD_INIT_DATASOURCES="ConfigDrive"
 #export DATASTORE_PKG_LOCATION
 #export BRANCH_OVERRIDE
 
+if [ ${HOST_USERNAME} == "root" ]; then
+  echo "You can't run this as root. But you do need sudo."
+  echo "No, I can't explain why that is."
+  exit 2
+fi
+
 # you typically do not have to change these variables
 export ELEMENTS_PATH=$(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")/diskimage_builder/elements:${PATH_TROVE}/integration/scripts/files/elements
 #export ELEMENTS_PATH=$TROVESTACK_SCRIPTS/files/elements
