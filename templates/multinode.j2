@@ -1,5 +1,6 @@
 # These initial groups are the only groups required to be modified. The
 # additional groups are for more control of the environment.
+[bifrost]
 [control]
 {% for host in groups['control'] %}{{host}}
 {% endfor %}
