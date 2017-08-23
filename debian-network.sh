@@ -48,7 +48,7 @@ neutron_external_interface: "${NEUTRON_INTERFACE}"
 enable_haproxy: "no"
 kolla_base_distro: "ubuntu"
 kolla_install_type: "source"
-openstack_release: "4.0.0"
+openstack_release: "5.0.0"
 enable_ceph: "yes"
 enable_ceph_rgw: "yes"
 ceph_enable_cache: "yes"
@@ -64,6 +64,8 @@ external_journal: false
 ceph_erasure_profile: "k=3 m=1 ruleset-failure-domain=host"
 enable_trove: "yes"
 enable_horizon_trove: "{{ enable_trove | bool }}"
+docker_registry: "gitlab.kumulus.co:5000"
+docker_namespace: "kumulus/kolla"
 EOF
 fi
 

@@ -89,11 +89,11 @@
      state: latest
     with_items:
     - setuptools
-    - docker-py 
+    - docker==2.0.1 
     - ansible
     - pyopenssl
-    - kolla==4.0.0
-    - kolla-ansible==4.0.0
+    - kolla==5.0.0.0b3
+    - kolla-ansible==5.0.0.0b3
   
   - name: mkdir the /etc/kolla directory
     file:
