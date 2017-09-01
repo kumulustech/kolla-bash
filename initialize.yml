@@ -68,6 +68,7 @@
      - libffi-dev
      - libssl-dev
      - gcc
+     - git
      - gawk
      - bridge-utils
 
@@ -92,8 +93,17 @@
     - docker==2.0.1 
     - ansible
     - pyopenssl
-    - kolla==5.0.0.0b3
-    - kolla-ansible==5.0.0.0b3
+
+  - name: clone kolla and kolla-ansible
+    git:
+      repo: https://github.com/openstack/{{item}}
+      dest: /root/{{item}}
+    with_items:
+      - kolla
+      - kolla-ansible
+
+  - name: install kolla via pip
+    command: pip install /root/kolla /root/kolla-ansible creates=/usr/local/share/kolla
   
   - name: mkdir the /etc/kolla directory
     file:
@@ -117,12 +127,12 @@
   - name: label devices
     include: labels.yml
 
-- hosts: control[0]
-  become: true
-  become_user: root
-  tasks:
-  - name: install host bootstrap requirements
-    command: kolla-ansible -i multinode bootstrap-servers
+#- hosts: control[0]
+#  become: true
+#  become_user: root
+#  tasks:
+#  - name: install host bootstrap requirements
+#    command: kolla-ansible -i multinode bootstrap-servers
 #  - name: launch openstack with kolla
 #    command: kolla-ansible -i multinode deploy
 #    register: deploy_multinode

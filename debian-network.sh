@@ -66,6 +66,10 @@ enable_trove: "yes"
 enable_horizon_trove: "{{ enable_trove | bool }}"
 docker_registry: "gitlab.kumulus.co:5000"
 docker_namespace: "kumulus/kolla"
+enable_cloudkitty: "yes"
+enable_designate: "yes"
+designate_backend: "bind9"
+designate_ns_record: "${VIP}"
 EOF
 fi
 

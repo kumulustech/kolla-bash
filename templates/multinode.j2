@@ -1,6 +1,5 @@
 # These initial groups are the only groups required to be modified. The
 # additional groups are for more control of the environment.
-[bifrost]
 [control]
 {% for host in groups['control'] %}{{host}}
 {% endfor %}
@@ -28,6 +27,9 @@
 {% for host in groups['control'] %}{{host}}
 {% endfor %}
 
+[deployment]
+localhost       ansible_connection=local
+
 [baremetal:children]
 control
 network
@@ -38,7 +40,7 @@ monitoring
 # You can explicitly specify which hosts run each project by updating the
 # groups in the sections below. Common services are grouped together.
 [chrony-server:children]
-control
+haproxy
 
 [chrony:children]
 control
@@ -55,6 +57,7 @@ monitoring
 
 [etcd:children]
 control
+compute
 
 [influxdb:children]
 monitoring
@@ -78,10 +81,26 @@ control
 [haproxy:children]
 network
 
+[hyperv]
+#hyperv_host
+
+[hyperv:vars]
+#ansible_user=user
+#ansible_password=password
+#ansible_port=5986
+#ansible_connection=winrm
+#ansible_winrm_server_cert_validation=ignore
+
 [mariadb:children]
 control
 
 [rabbitmq:children]
+control
+
+[outward-rabbitmq:children]
+control
+
+[qdrouterd:children]
 control
 
 [mongodb:children]
@@ -97,6 +116,14 @@ control
 control
 
 [neutron:children]
+network
+
+[openvswitch:children]
+network
+compute
+manila-share
+
+[opendaylight:children]
 network
 
 [cinder:children]
@@ -196,6 +223,18 @@ control
 [placement:children]
 control
 
+[bifrost:children]
+deployment
+
+[zun:children]
+control
+
+[skydive:children]
+monitoring
+
+[redis:children]
+control
+
 # Additional control implemented here. These groups allow you to control which
 # services run on which hosts at a per-service level.
 #
@@ -252,6 +291,9 @@ neutron
 neutron
 
 [neutron-vpnaas-agent:children]
+neutron
+
+[neutron-bgp-dragent:children]
 neutron
 
 # Ceph
@@ -522,7 +564,7 @@ designate
 designate
 
 [designate-mdns:children]
-designate
+network
 
 [designate-worker:children]
 designate
@@ -536,3 +578,25 @@ designate
 # Placement
 [placement-api:children]
 placement
+
+# Zun
+[zun-api:children]
+zun
+
+[zun-compute:children]
+compute
+
+# Skydive
+[skydive-analyzer:children]
+skydive
+
+[skydive-agent:children]
+compute
+network
+
+# Tacker
+[tacker-server:children]
+tacker
+
+[tacker-conductor:children]
+tacker

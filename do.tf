@@ -66,7 +66,7 @@ resource "digitalocean_volume" "ceph-g" {
 
 resource "digitalocean_droplet" "kolla" {
     image = "ubuntu-16-04-x64"
-    name = "kolla-${count.index}"
+    name = "rhs-kolla-${count.index}"
     region = "sfo2"
     size = "8gb"
     ssh_keys = ["778729"]
@@ -85,13 +85,13 @@ resource "digitalocean_droplet" "kolla" {
 ##      } 
 ##    }
     provisioner "local-exec" {
-      command = "echo kolla-${count.index} ansible_ssh_host=kolla-${count.index}.opsits.com ansible_connection=ssh ansible_ssh_user=root >> inventory"
+      command = "echo rhs-kolla-${count.index} ansible_ssh_host=kolla-${count.index}.opsits.com ansible_connection=ssh ansible_ssh_user=root >> inventory"
     }
 }
 resource "digitalocean_record" "kolla" {
     domain = "opsits.com"
     type = "A"
     count = 3
-    name = "kolla-${count.index}"
+    name = "rhs-kolla-${count.index}"
     value = "${element(digitalocean_droplet.kolla.*.ipv4_address,count.index)}"
 }

@@ -1,15 +1,14 @@
 [control]
-kolla-0 ansible_ssh_host=kolla-0.opsits.com ansible_connection=ssh ansible_ssh_user=root
-kolla-1 ansible_ssh_host=kolla-1.opsits.com ansible_connection=ssh ansible_ssh_user=root
-kolla-2 ansible_ssh_host=kolla-2.opsits.com ansible_connection=ssh ansible_ssh_user=root
+rhs-kolla-0 ansible_ssh_host=rhs-kolla-0.opsits.com
+rhs-kolla-1 ansible_ssh_host=rhs-kolla-1.opsits.com
+rhs-kolla-2 ansible_ssh_host=rhs-kolla-2.opsits.com
 
 [compute]
-kolla-0 ansible_ssh_host=kolla-0.opsits.com ansible_connection=ssh ansible_ssh_user=root
-kolla-1 ansible_ssh_host=kolla-1.opsits.com ansible_connection=ssh ansible_ssh_user=root
-kolla-2 ansible_ssh_host=kolla-2.opsits.com ansible_connection=ssh ansible_ssh_user=root
+rhs-kolla-0 ansible_ssh_host=rhs-kolla-0.opsits.com
+rhs-kolla-1 ansible_ssh_host=rhs-kolla-1.opsits.com
+rhs-kolla-2 ansible_ssh_host=rhs-kolla-2.opsits.com
 
 [all:vars]
 domain=opsits.com
-kolla-1 ansible_ssh_host=kolla-1.opsits.com ansible_connection=ssh ansible_ssh_user=root
-kolla-0 ansible_ssh_host=kolla-0.opsits.com ansible_connection=ssh ansible_ssh_user=root
-kolla-2 ansible_ssh_host=kolla-2.opsits.com ansible_connection=ssh ansible_ssh_user=root
+ansible_connection=ssh
+ansible_ssh_user=root
