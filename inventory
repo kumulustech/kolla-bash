@@ -1,14 +1,14 @@
 [control]
-rhs-kolla-0 ansible_ssh_host=rhs-kolla-0.opsits.com
-rhs-kolla-1 ansible_ssh_host=rhs-kolla-1.opsits.com
-rhs-kolla-2 ansible_ssh_host=rhs-kolla-2.opsits.com
+control-0 ansible_ssh_host=control-0.cloudsushi.io 
+#control-1 ansible_ssh_host=control-1.cloudsushi.io 
+#control-2 ansible_ssh_host=control-2.cloudsushi.io 
 
 [compute]
-rhs-kolla-0 ansible_ssh_host=rhs-kolla-0.opsits.com
-rhs-kolla-1 ansible_ssh_host=rhs-kolla-1.opsits.com
-rhs-kolla-2 ansible_ssh_host=rhs-kolla-2.opsits.com
+control-0 ansible_ssh_host=control-0.cloudsushi.io 
+#control-1 ansible_ssh_host=control-1.cloudsushi.io 
+#control-2 ansible_ssh_host=control-2.cloudsushi.io 
 
 [all:vars]
-domain=opsits.com
+domain=cloudsushi.io
 ansible_connection=ssh
 ansible_ssh_user=root

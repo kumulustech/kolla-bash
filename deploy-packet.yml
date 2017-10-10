@@ -1,0 +1,18 @@
+---
+- name: create ubuntu device
+  hosts: localhost
+  connection: local
+  vars:
+    packet_key: 6sUxEHBABydE1w4Pk6grkJrMB7LWHvT8
+    packet_project: 84fe4749-d08b-4042-b722-5573466f35f3
+    dnsimple_id: 67012
+    dnsimple_key: NGVlbknnNfjYw33P0M9VV3KifKRrW4xp
+  tasks:
+
+  - packet_device:
+      auth_token: "{{packet_key}}"
+      project_id: "{{packet_project}}"
+      hostnames: [rhs-control-1,rhs-control-2,rhs-control-3]
+      operating_system: ubuntu_16_04
+      plan: baremetal_0
+      facility: sjc1

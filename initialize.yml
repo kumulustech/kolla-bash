@@ -22,6 +22,10 @@
   become: true
   become_user: root
   tasks:
+  - name: stop daily apt tasks
+    service:
+      name: apt-daily.timer
+      state: stopped
   - name: create and update ssh for shared communications
     include: tasks/ssh.yml
   - name: ensure hosts file is correct
@@ -37,7 +41,7 @@
       - import_image.sh
       - node_delete.sh
       - launch.sh
-      - labels-reset.yml
+      #- labels.yml
 
   - name: upload multinode template
     template: src=templates/multinode.j2 dest=/root/multinode
@@ -124,8 +128,8 @@
     register: debian_config
     args:
       creates: /etc/kolla/globals.yml
-  - name: label devices
-    include: labels.yml
+#  - name: label devices
+#    include: labels.yml
 
 #- hosts: control[0]
 #  become: true

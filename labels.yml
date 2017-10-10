@@ -5,8 +5,5 @@
     - sda
     - sdb
     - sdc
-    - sdd
-    - sde
-    - sdf
 - name: cache label
-  command: parted /dev/sdg -s -- mklabel gpt mkpart KOLLA_CEPH_OSD_CACHE_BOOTSTRAP 1 -1
+  command: parted /dev/sdd -s -- mklabel gpt mkpart KOLLA_CEPH_OSD_CACHE_BOOTSTRAP 1 -1
