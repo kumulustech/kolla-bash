@@ -102,6 +102,7 @@
     git:
       repo: https://github.com/openstack/{{item}}
       dest: /root/{{item}}
+      version: stable/pike 
     with_items:
       - kolla
       - kolla-ansible
