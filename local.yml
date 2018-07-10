@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  connect: local
+  tasks:
+  - template:
+      src: templates/inventory.j2
+      dest: packet-inventory
+

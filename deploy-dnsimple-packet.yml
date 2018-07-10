@@ -23,3 +23,14 @@
     template:
       src: templates/inventory.j2
       dest: inventory
+  - name: register devices with dnsimple
+    dnsimple:
+      type: "A"
+      ttl: "60"
+      name: "{{item.hostname}}"
+      content: "{{item.public_ipv4}}"
+      domain: "cloudsushi.io"
+      dnsimple_token: "{{dnsimple_token}}"
+      dnsimple_account: "{{dnsimple_account}}"
+      state: "{{build}}"
+    with_items: "{{packet_info['devices']}}"

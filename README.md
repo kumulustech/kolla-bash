@@ -1,62 +1,73 @@
 # Launching Kolla based OpenStack
 
-As with any installation, there are certain pre-requisites that need to be in place.  For simple "devstack" like usage, we can pull from the Hub.docker.io registry, and simply leverage/extend the default kolla driven ansible inventory to manage deployment.
+As with any installation, there are certain pre-requisites that need to be in place.  For simple "devstack" like usage, we can pull our images from the Hub.docker.io registry, and simply leverage/extend the default kolla driven ansible inventory to manage deployment.
 
-## Quick Start
+The following lab is based on the ktos-050 branch of the kolla-bash project:
+
+https://github.com/kumulustech/kolla-bash
 
 0) git clone this repository and select the ktos-050 branch
-1) if you're going to use bare metal servers, install Ubuntu, and either add their IP addresses to DNS, or update the inventory with their IP addresses.
-2) If you're going to use packet.net as your target, get an auth token from packet either via the packet API, or more commonly via the Packet.net web site.  Whlie you are at the site, get the packet Project ID as well.
-2) update the project ID and auth token in the 'vars' section of the deploy-packet.yml
-3) verify the python virtual environment path in localinventory
-4) source the virtual environment activate script:
 
-     . ~/.pyenv/kolla/bin/active
-     # or create and activate:
-     virtualenv ~/.pyenv/kolla; . ~/.pyenv/kolla/bin/active
+    git clone https://github.com/kumulustech/kolla-bash -b ktos-050
 
-4) Install the python components needed:
+1) if you're going to use bare metal servers, install Ubuntu, and either add their IP addresses to DNS, or update the default inventory file with their IP addresses.
 
+If you are using an automated infrastructure, specifically packet.net for compute and dnsimple.com as a managed DNS service, you can use the packet-deploy.yml Ansible playbook. If not, you may be able to do a similar deployment with a tool like terraform or even write your own ansible to launch your infastructure.
+
+2) If you're going to use packet.net as your target, get a packet project ID and create (or capture) your via the app.packet.net site.
+3) Create a "packet_auth.api" file (it can be any name), and in it create a line like (replacing the packet-auth-token-from... string with the token you grabbed from app.packet.net and the project id with the project id from the URL or the project info page)
+
+    PACKET_TOKEN=packet-auth-token-from-app-packet-net
+    PACKET_PROJECT=packet-project-from-app-packet-net
+
+Then source that file:
+
+    source packet_auth.api
+
+3) We also need the packet service, and ansible available to us, so create a virtual environment (or spin up a container) and install the parameters.
+
+    mkdir ~/.pyenv
+    pip install virtualenv
+    virtualenv ~/.pyenv/kolla
+    . ~/.pyenv/kolla/bin/activate
     pip install -r requirements.txt
 
-5) Modify the deploy-packet.yml if you don't have a dnsimple domain
+4) If you start a new terminal at any time don't forget to source the virtual environment activate script:
 
-    ansible-playbook -i localinventory deploy-packet.yml
+     . ~/.pyenv/kolla/bin/active
 
-6) Update dns or change to IP based node names in "inventory"
-7) review the settings in the globals.yml (in debian-network.sh) and deploy
+And source your packet.api file as well to have the right environment variables.
+
+     . packet.api
+
+5) If you have a DNSimple account, and want to use the full current script, get an API token, and your DNSimple account ID and add them as "DNSIMPLE_TOKEN" and "DNSIMPLE_ACCOUNT" to your packet.api file:
+
+    PACKET_TOKEN=packet-auth-token-from-app-packet-net
+    PACKET_PROJECT=packet-project-from-app-packet-net
+    DNSIMPLE_TOKEN=dnsimple-api-token
+    DNSIMPLE_ACCOUNT=dnsimple-account-id
+
+Source the packet.api file again:
+
+    . packet.API
+
+6) Finally we can launch, either with DNSimple to set the DNS parameters:
+
+    ./create-dnsimple-packet.sh
+
+Or if you don't have the DNSimple service, you can run:
+
+    ./create.sh
+
+Note, once you're done, you can clean up your environment with the "delete" version of the above scripts. Note that cleanup can only happen _after_ the packet nodes have finished their boot process, which usually takes ~ 5 minutes.  State can be seen on app.packet.net as well.
+
+6) If you used either of the packet based systems, you will have an inventory with ssh host definitions and IP addresses from the packet deployments.
+
+7) Now look at the Kolla configuratinos in the globals.yml from the files/ directory.  Note that some parameters are auto-discovered from the debian-network.sh script, as we try to auto-discover the default host IP address for the API services and Horizon (if configured).
+
+Finally, we can configure our nodes with the prerequisites to deploy Kolla/openstack (e.g. docker, ansible, kolla code, etc.):
 
     ansible-playbook -i inventory initialize.yml
 
-## Launch an "All-in-one" instance
-
-This script sets up some prerequisites agains a CentOS or Ubuntu based instance, then, using the Kolla tools, launches a pull of the upstream (hub.docker) registered images. It runs the ansible deploy script, and at the end it _should_ have a running baseline OpenStack environment stood up.
-
-This has been validated using machines from Packet.net (type_0).
-
-To run this script, you can just pull the repository down via git (likely have to install git on the target) and then make the necessary local modifications for your enviornment (specifically tokens and virtualenv path).
-
-## Add a compute node
-
-A common operation is to extend a system with an additional compute node.  This requires launching an additional network and compute agent at a minimum, and configuring those agents to communicate with the original all-in-one node.
-
-Adding a node does require ssh communication from the all-in-one node to the compute node being added to allow the ansible trigger to run.  This configuration requires adding at a minimum a public/private pair to the all-in-one node, and the public key to the compute node to be added.
-
-The simplest way to execute the required setup is to use ansible, possibly from another machine, to launch the initialize.yml play.  This relies on information in the _inventory_ file, that should be configured as appropriate for your node names.
-
-There are two parts to the inventory, one is a name for a device, which should match the hostname for the machine in question, and the second is the ansible_ssh_host parameter, which can map to either the fqdn of the machine if DNS is configured, or to the IP address of the node instead.
-
-If you set the FQDN (and as long as that is configured in DNS), you should add a domain parameter in the [all:vars] section of the inventory file.
-
-Once these parameters are configured, and so long as you have two nodes available (one for control, one for compute), you should be able to get to a running system via:
-
-'''
-ansible-playbook -i inventory initialize.yml
-'''
-
-### Note about node roles
-There is a templated kolla multi-node inventory that is generated from multinode.tmpl based on the inventory file. One change that might be useful would be to remove the "control" nodes from the compute target,, as a type_0 on packet is often too slow for any meaningful compute cooperation. You would want to update the initial deploy script to call out a different type of resource for the compute nodes in that case.
-
 ## Network config
-
 Because this was intended for setting up little test environments, the network config is fairly simplistic, including the scripted creation of a basic tenant/router/floating IP network.  The "public" services are associated with a linux bridge "external" bridge (br-ex), and an additional interface can readily be added if one is available for proper resource sharing.  In which case it would be sensible to look at the IP range set on the bridge (which allows controller access to the "external" network), along with the setup_network.sh script that configures the network and floating pool.
