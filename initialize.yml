@@ -166,10 +166,11 @@
   tasks:
   - name: install host bootstrap requirements
     command: kolla-ansible -i multinode bootstrap-servers
-  - name: launch openstack with kolla
-    command: kolla-ansible -i multinode deploy
-    register: deploy_multinode
-    ignore_errors: true
+#  - name: launch openstack with kolla
+#    command: kolla-ansible -i multinode deploy
+#    register: deploy_multinode
+#    ignore_errors: true
+
   - name: run post-install config
     command: ./post-install.sh
 #    register: post_install
