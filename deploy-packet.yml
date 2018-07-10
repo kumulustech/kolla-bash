@@ -1,0 +1,33 @@
+---
+- name: create ubuntu device
+  hosts: localhost
+  connection: local
+  vars:
+    build: present
+    project_id: a6e165b5-062a-48ac-9aa5-4513087f3bfd
+  tasks:
+  - name: create or disciver packet devices
+    packet_device:
+      project_id: "{{project_id}}"
+      hostnames: [control,compute1,compute2]
+      operating_system: ubuntu_16_04
+      plan: baremetal_0
+      facility: sjc1
+      state: "{{build}}"
+      wait_for_public_IPv: 4
+    register: packet_info
+  - name: show packet name and IP
+    debug:
+      msg: "{{item.hostname}} {{item.public_ipv4}}"
+    with_items: "{{packet_info['devices']}}"
+  - name: register devices with dnsimple
+    dnsimple:
+      type: "A"
+      ttl: "60"
+      name: "{{item.hostname}}"
+      content: "{{item.public_ipv4}}"
+      domain: "cloudsushi.io"
+      dnsimple_token: "{{dnsimple_token}}"
+      dnsimple_account: "{{dnsimple_account}}"
+      state: "{{build}}"
+    with_items: "{{packet_info['devices']}}"

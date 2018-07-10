@@ -1,0 +1,6 @@
+.Python
+lib/
+include/
+pip-selfcheck.json
+bin/
+id_rsa*

@@ -1,0 +1,11 @@
+[control]
+control.cloudsushi.io
+
+[compute]
+compute1.cloudsushi.io
+compute2.cloudsushi.io
+
+[all:vars]
+domain=cloudsushi.io
+ansible_connection=ssh
+ansible_ssh_user=root

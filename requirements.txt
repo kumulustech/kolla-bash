@@ -1,0 +1,5 @@
+ansible==2.6.1
+dnsimple==1.1.0
+packet-python==1.37.1
+paramiko==2.4.1
+pylint==1.9.2

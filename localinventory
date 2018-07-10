@@ -1,0 +1,10 @@
+[all]
+localhost
+
+[all:vars]
+domain=cloudsushi.io
+#ansible_connection=ssh
+ansible_ssh_user=root
+ansible_python_interpreter=/Users/rstarmer/.pyenv/kolla/bin/python
+ansible_connection=local
+
